@@ -1,0 +1,1594 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Controle de Armários | RH</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  /* fundos agrupados e rótulos no estilo do sistema */
+  --bg:#F2F2F7; --surface:#FFFFFF; --surface-2:#F2F2F7; --fill:rgba(118,118,128,.12); --fill-2:rgba(118,118,128,.08);
+  --ink:#1C1C1E; --muted:rgba(60,60,67,.62); --line:rgba(60,60,67,.16); --line-strong:rgba(60,60,67,.29);
+  --material:rgba(249,249,251,.72); --material-side:rgba(242,242,247,.78); --material-strong:rgba(255,255,255,.86);
+  /* tom de destaque: verde oliva */
+  --olive:#5B6E2C; --olive-dk:#4A5A22; --olive-soft:rgba(91,110,44,.13); --on-olive:#FFFFFF;
+  /* cores de status: ponto vivo + texto legível */
+  --ok-dot:#34C759; --ok:#1F7A36; --ok-soft:rgba(52,199,89,.14);
+  --bad-dot:#FF3B30; --bad:#C4271C; --bad-soft:rgba(255,59,48,.12);
+  --res-dot:#FFCC00; --res:#8A6400; --res-soft:rgba(255,204,0,.2);
+  --mnt-dot:#FF9500; --mnt:#B35900; --mnt-soft:rgba(255,149,0,.14); --mnt-soft2:rgba(255,149,0,.24);
+  --ina-dot:#AEAEB2; --ina:#6C6C70; --ina-soft:rgba(142,142,147,.14);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.06),0 1px 1px rgba(0,0,0,.04);
+  --shadow-lg:0 24px 64px rgba(0,0,0,.22),0 4px 16px rgba(0,0,0,.08);
+  --focus:rgba(91,110,44,.45);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI Variable Text","Segoe UI",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",system-ui,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --round:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI Variable Display","Segoe UI",system-ui,Roboto,sans-serif;
+  --cond:var(--round);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#000000; --surface:#1C1C1E; --surface-2:#2C2C2E; --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --ink:#F5F5F7; --muted:rgba(235,235,245,.6); --line:rgba(84,84,88,.6); --line-strong:rgba(84,84,88,.9);
+  --material:rgba(28,28,30,.72); --material-side:rgba(22,22,24,.82); --material-strong:rgba(44,44,46,.86);
+  --olive:#A9BE6B; --olive-dk:#BDD07F; --olive-soft:rgba(169,190,107,.18); --on-olive:#141A06;
+  --ok-dot:#30D158; --ok:#4CD964; --ok-soft:rgba(48,209,88,.18);
+  --bad-dot:#FF453A; --bad:#FF6961; --bad-soft:rgba(255,69,58,.18);
+  --res-dot:#FFD60A; --res:#FFD60A; --res-soft:rgba(255,214,10,.16);
+  --mnt-dot:#FF9F0A; --mnt:#FFB340; --mnt-soft:rgba(255,159,10,.16); --mnt-soft2:rgba(255,159,10,.26);
+  --ina-dot:#8E8E93; --ina:#AEAEB2; --ina-soft:rgba(142,142,147,.18);
+  --shadow-sm:none; --shadow-lg:0 24px 64px rgba(0,0,0,.6);
+  --focus:rgba(169,190,107,.5);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#000000; --surface:#1C1C1E; --surface-2:#2C2C2E; --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --ink:#F5F5F7; --muted:rgba(235,235,245,.6); --line:rgba(84,84,88,.6); --line-strong:rgba(84,84,88,.9);
+  --material:rgba(28,28,30,.72); --material-side:rgba(22,22,24,.82); --material-strong:rgba(44,44,46,.86);
+  --olive:#A9BE6B; --olive-dk:#BDD07F; --olive-soft:rgba(169,190,107,.18); --on-olive:#141A06;
+  --ok-dot:#30D158; --ok:#4CD964; --ok-soft:rgba(48,209,88,.18);
+  --bad-dot:#FF453A; --bad:#FF6961; --bad-soft:rgba(255,69,58,.18);
+  --res-dot:#FFD60A; --res:#FFD60A; --res-soft:rgba(255,214,10,.16);
+  --mnt-dot:#FF9F0A; --mnt:#FFB340; --mnt-soft:rgba(255,159,10,.16); --mnt-soft2:rgba(255,159,10,.26);
+  --ina-dot:#8E8E93; --ina:#AEAEB2; --ina-soft:rgba(142,142,147,.18);
+  --shadow-sm:none; --shadow-lg:0 24px 64px rgba(0,0,0,.6);
+  --focus:rgba(169,190,107,.5);
+}
+html{height:100%;font-size:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);font:400 .875rem/1.45 var(--font);letter-spacing:-.006em;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+#root{height:100%}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:1px;border-radius:8px}
+h1,h2,h3{margin:0;font-weight:600}
+a{color:var(--olive);text-decoration:none}
+a:hover{text-decoration:underline}
+.muted{color:var(--muted)}
+.small{font-size:.78rem;letter-spacing:0}
+
+/* login */
+.login{min-height:100%;display:grid;place-items:center;padding:24px;background:var(--bg)}
+.lcard{width:min(400px,100%);background:var(--surface);border-radius:22px;padding:36px 28px 28px;box-shadow:var(--shadow-sm);text-align:center}
+.lmark{width:72px;height:72px;margin:0 auto 18px;border-radius:17px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(160deg,#7C9140 0%,#56692A 55%,#3D4B1C 100%);box-shadow:0 8px 20px rgba(61,75,28,.28),inset 0 1px 0 rgba(255,255,255,.25)}
+.lmark svg{width:30px;height:40px}
+.lcard h1{font:700 1.75rem/1.1 var(--display);letter-spacing:-.022em}
+.lcard .sub{margin:6px 0 26px;color:var(--muted);font-size:.9rem}
+.lcard>p{text-align:left}
+.who-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;margin-bottom:16px;background:var(--fill-2);text-align:left}
+.who-row img{width:40px;height:40px;border-radius:50%}
+.lnote{font-size:.78rem;color:var(--muted);margin-top:16px;text-align:center}
+.login .btn.pri{height:46px!important;border-radius:12px;font-size:1rem;font-weight:600}
+
+/* shell */
+.shell{display:grid;grid-template-columns:252px minmax(0,1fr);height:100%}
+.side{background:var(--material-side);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);color:var(--ink);display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid var(--line)}
+.brand{display:flex;flex-direction:column;gap:12px;align-items:stretch;padding:18px 16px 14px}
+.plate{background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 0 0 1px var(--line)}
+.plate img{display:block;width:100%;max-width:190px;height:auto;margin:0 auto}
+.lplate{margin:0 auto 22px;width:220px;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 0 0 1px var(--line)}
+.lplate img{display:block;width:100%;height:auto}
+.brand svg{width:34px;height:34px;flex:none;padding:6px 8px;border-radius:9px;color:#fff;background:linear-gradient(160deg,#7C9140,#4A5A22)}
+.brand b{display:block;font:700 .98rem/1.15 var(--display);letter-spacing:-.012em;padding-left:4px}
+.brand span{display:block;font-size:.72rem;color:var(--muted);margin-top:1px;padding-left:4px}
+.nav{padding:6px 10px;display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;background:none;border:0;border-radius:9px;color:inherit;text-align:left;cursor:pointer;font-weight:500;transition:background-color .15s,transform .1s}
+.nav button svg{width:19px;height:19px;flex:none;color:var(--olive)}
+.nav button:hover{background:var(--fill-2)}
+.nav button:active{transform:scale(.98);background:var(--fill)}
+.nav button.on{background:var(--olive);color:var(--on-olive);font-weight:600}
+.nav button.on svg{color:var(--on-olive)}
+.nav .cnt{margin-left:auto;background:var(--bad-dot);color:#fff;border-radius:999px;padding:0 7px;font-size:.7rem;font-weight:600;line-height:18px;min-width:20px;text-align:center}
+.nav button.on .cnt{background:rgba(255,255,255,.9);color:var(--bad)}
+.side-foot{margin-top:auto;padding:14px 20px;font-size:.72rem;color:var(--muted)}
+.main{display:flex;flex-direction:column;min-width:0;height:100%;overflow-y:auto;overscroll-behavior:contain;position:relative}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 28px;
+  background:transparent;border-bottom:1px solid transparent;transition:background-color .2s,border-color .2s}
+.top.scrolled{background:var(--material);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom-color:var(--line)}
+.top h1{font:600 .98rem/1.2 var(--display);letter-spacing:-.012em;white-space:nowrap;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
+.top.titled h1{opacity:1;transform:none}
+.ltitle{font:700 1.85rem/1.1 var(--display);letter-spacing:-.024em;margin:2px 0 18px}
+.ib{display:inline-grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;background:var(--fill);color:var(--ink);cursor:pointer;flex:none;transition:transform .1s,background-color .15s}
+.ib:active{transform:scale(.92)}
+.ib svg{width:17px;height:17px}
+.menu-btn{display:none}
+.gsearch{position:relative;margin-left:auto;width:min(360px,40vw)}
+.gsearch svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted)}
+.gsearch input{width:100%;height:34px;border:0;border-radius:10px;background:var(--fill);padding:0 12px 0 32px;outline:none}
+.gsearch input:focus{box-shadow:0 0 0 3px var(--focus)}
+.gsearch input::placeholder{color:var(--muted)}
+.gres{position:absolute;top:42px;left:0;right:0;background:var(--material-strong);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);z-index:30;max-height:380px;overflow:auto;padding:6px;transform-origin:top center;animation:pop .22s cubic-bezier(.2,.9,.3,1)}
+.gres button{display:flex;width:100%;gap:10px;align-items:center;text-align:left;padding:8px 10px;border:0;border-radius:9px;background:none;cursor:pointer}
+.gres button:hover,.gres button:focus{background:var(--fill)}
+.gres .none{padding:12px;color:var(--muted)}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(-4px)}to{opacity:1;transform:none}}
+.me{display:flex;align-items:center;gap:10px}
+.me img{width:30px;height:30px;border-radius:50%}
+.av{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--olive);color:var(--on-olive);font-size:.72rem;font-weight:700;letter-spacing:.02em;flex:none}
+.me .nm{font-size:.8rem;line-height:1.2;font-weight:500}
+.me .nm span{display:block;font-size:.7rem;color:var(--muted);font-weight:400}
+.localbar{margin:0 28px 6px;background:var(--res-soft);color:var(--ink);padding:8px 14px;border-radius:10px;font-size:.78rem}
+.content{flex:1;padding:4px 28px 56px}
+.scrim{display:none}
+
+/* controles */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;border-radius:10px;border:0;background:var(--fill);color:var(--olive);cursor:pointer;font-weight:600;white-space:nowrap;transition:transform .1s ease-out,background-color .15s,opacity .15s}
+.btn:hover{background:var(--olive-soft)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--olive);color:var(--on-olive)}
+.btn.pri:hover{background:var(--olive-dk)}
+.btn.warn{color:var(--bad)}
+.btn.warn:hover{background:var(--bad-soft)}
+.btn.sm{height:28px;padding:0 11px;font-size:.78rem;border-radius:8px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn svg{width:15px;height:15px}
+.inp,select.inp,textarea.inp{height:36px;border:0;border-radius:10px;background:var(--fill);padding:0 12px;min-width:0;outline:none;transition:box-shadow .15s}
+.inp:focus{box-shadow:0 0 0 3px var(--focus)}
+.inp[readonly]{color:var(--muted)}
+select.inp{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='14' viewBox='0 0 10 14'%3E%3Cpath d='M2 5l3-3 3 3M2 9l3 3 3-3' fill='none' stroke='%238E8E93' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+textarea.inp{height:auto;padding:9px 12px;resize:vertical;min-height:72px;line-height:1.4}
+input[type=file].inp{padding:6px 10px;height:auto}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:16px}
+.toolbar .grow{flex:1 1 220px}
+.toolbar .sp{margin-left:auto}
+.field{display:flex;flex-direction:column;gap:5px}
+.field>span{font-size:.75rem;font-weight:500;color:var(--muted);padding-left:2px;letter-spacing:.005em}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 14px}
+.fgrid .full{grid-column:1/-1}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.84rem;padding:10px 12px;border-radius:10px;background:var(--fill-2)}
+.check input{margin-top:2px;accent-color:var(--olive);width:16px;height:16px}
+
+/* segmentado */
+.seg,.tabs{display:inline-flex;gap:2px;padding:2px;border-radius:10px;background:var(--fill);max-width:100%;overflow-x:auto;scrollbar-width:none}
+.seg button,.tabs button{height:30px;padding:0 12px;border:0;border-radius:8px;background:none;cursor:pointer;font-weight:500;font-size:.8rem;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background-color .2s,box-shadow .2s,transform .1s}
+.seg button:active,.tabs button:active{transform:scale(.97)}
+.seg button.on,.tabs button.on{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04);font-weight:600}
+.tabs{margin-bottom:16px}
+.seg .d{width:8px;height:8px;border-radius:50%}
+.seg b{font-weight:600;color:var(--muted)}
+
+/* selos */
+.bdg{display:inline-flex;align-items:center;gap:6px;padding:2px 9px 2px 8px;border-radius:999px;font-size:.74rem;font-weight:600;white-space:nowrap}
+.bdg::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dc,currentColor)}
+.bdg.ok{color:var(--ok);background:var(--ok-soft);--dc:var(--ok-dot)}
+.bdg.bad{color:var(--bad);background:var(--bad-soft);--dc:var(--bad-dot)}
+.bdg.res{color:var(--res);background:var(--res-soft);--dc:var(--res-dot)}
+.bdg.mnt{color:var(--mnt);background:var(--mnt-soft);--dc:var(--mnt-dot)}
+.bdg.ina{color:var(--ina);background:var(--ina-soft);--dc:var(--ina-dot)}
+.bdg.neu{color:var(--muted);background:var(--fill-2)}
+.bdg.oli{color:var(--olive);background:var(--olive-soft)}
+
+/* painéis */
+.panel{background:var(--surface);border-radius:16px;padding:18px 18px 16px;box-shadow:var(--shadow-sm)}
+.panel>h2{font:600 1.02rem/1.25 var(--display);letter-spacing:-.014em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel>h2 .sp{margin-left:auto;font-weight:600}
+.stack{display:flex;flex-direction:column;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.kpi .l{font-size:.78rem;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:7px}
+.kpi .l::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--k,var(--olive))}
+.kpi .v{font:600 2.1rem/1.1 var(--round);letter-spacing:-.025em;margin-top:6px}
+.kpi .s{font-size:.72rem;color:var(--muted)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sbar{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;background:var(--fill);margin:4px 0 12px}
+.sbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.78rem;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.bars{display:flex;flex-direction:column;gap:9px}
+.brow{display:grid;grid-template-columns:110px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:.8rem}
+.brow .t{height:8px;background:var(--fill);border-radius:4px;overflow:hidden}
+.brow .t i{display:block;height:100%;background:var(--olive);border-radius:4px}
+.brow .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .vv{text-align:right;font-weight:600;font-family:var(--round)}
+.subh{font-size:.75rem;font-weight:600;color:var(--muted);margin:20px 0 10px}
+.plist{display:flex;flex-direction:column}
+.pitem{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.pitem:last-child{border-bottom:0}
+.pitem .tx{flex:1;min-width:0}
+.pitem .tx b{display:block;font-size:.84rem;font-weight:600}
+.pitem .tx span{font-size:.75rem;color:var(--muted)}
+.pgroup{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:8px 14px;border:0;border-radius:12px;margin-bottom:6px;background:var(--fill-2);cursor:pointer;width:100%;text-align:left;font-weight:500;transition:background-color .15s,transform .1s}
+.pgroup:hover{background:var(--fill)}
+.pgroup:active{transform:scale(.985)}
+.pgroup .n{font:600 1.45rem/1 var(--round);letter-spacing:-.02em}
+.pgroup.z{opacity:.5}
+.alert-h{display:flex;gap:10px;align-items:center;background:var(--bad-soft);color:var(--bad);padding:11px 14px;border-radius:12px;font-weight:700;font-size:.82rem;letter-spacing:.01em;margin-bottom:14px}
+
+/* tabelas */
+.tw{overflow-x:auto;border-radius:14px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.panel .tw,.box .tw,.mbody .tw{box-shadow:none;border:1px solid var(--line);border-radius:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.tbl th{text-align:left;font-size:.72rem;font-weight:600;color:var(--muted);padding:11px 14px 9px;border-bottom:1px solid var(--line);white-space:nowrap;letter-spacing:.005em}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.click{cursor:pointer;transition:background-color .12s}
+.tbl tr.click:hover td{background:var(--fill-2)}
+.tbl tr.click:active td{background:var(--fill)}
+.tbl .num{font:600 .95rem var(--round);letter-spacing:-.01em}
+.tbl .acts{white-space:nowrap;text-align:right}
+.tbl .obs{max-width:300px;color:var(--muted);font-size:.78rem}
+.count{font-size:.78rem;color:var(--muted);margin:0 0 10px 4px}
+.empty{text-align:center;padding:56px 24px;color:var(--muted);background:var(--surface);border-radius:16px;box-shadow:var(--shadow-sm)}
+.empty b{display:block;color:var(--ink);font:600 1.05rem/1.3 var(--display);letter-spacing:-.012em;margin-bottom:4px}
+.empty .btn{margin-top:16px}
+
+/* mapa de armários */
+.maptool{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.mapwrap{overflow-x:auto;padding:18px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow-sm)}
+.floor{height:6px;margin-top:8px;border-radius:3px;background:var(--fill)}
+.map{display:grid;grid-template-columns:repeat(var(--cols),minmax(66px,1fr));gap:6px;min-width:calc(var(--cols) * 72px)}
+.lk{--dc:var(--ok-dot);--face:var(--ok-soft);position:relative;aspect-ratio:3/4.1;border:0;border-radius:10px;
+  background:var(--face);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dc) 22%,transparent);cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:var(--ink);overflow:hidden;transition:transform .12s ease-out,opacity .25s,box-shadow .15s;touch-action:manipulation}
+.lk:hover{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--dc) 60%,transparent)}
+.lk:active{transform:scale(.95)}
+.lk::before{content:"";position:absolute;top:12px;left:28%;right:28%;height:9px;border-radius:2px;background:repeating-linear-gradient(180deg,color-mix(in srgb,var(--ink) 22%,transparent) 0 1.5px,transparent 1.5px 3.5px)}
+.lk::after{content:"";position:absolute;right:8px;top:50%;width:3px;height:14px;border-radius:2px;background:color-mix(in srgb,var(--ink) 25%,transparent)}
+.lk .n{font:600 1.3rem/1 var(--round);letter-spacing:-.02em;position:absolute;top:38%;left:0;right:0;text-align:center}
+.lk .w{font-size:.64rem;line-height:1.15;width:100%;padding:0 6px 7px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-weight:500}
+.lk .s{position:absolute;top:8px;left:8px;width:7px;height:7px;border-radius:50%;background:var(--dc)}
+.lk.ocupado{--dc:var(--bad-dot);--face:var(--bad-soft)}
+.lk.reservado{--dc:var(--res-dot);--face:var(--res-soft)}
+.lk.manutencao{--dc:var(--mnt-dot);background:repeating-linear-gradient(135deg,var(--mnt-soft) 0 7px,var(--mnt-soft2) 7px 14px)}
+.lk.inativo{--dc:var(--ina-dot);--face:var(--ina-soft);opacity:.5}
+.lk.dim{opacity:.14}
+.lk .flag{position:absolute;top:5px;right:6px;font-size:.7rem;line-height:1}
+.mapnote{font-size:.78rem;color:var(--muted);margin:12px 4px 0}
+
+/* folhas (modais) */
+#modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px}
+#modal[hidden]{display:none}
+.mbk{position:absolute;inset:0;background:rgba(0,0,0,.32);opacity:0;will-change:opacity}
+.mbox{position:relative;width:min(600px,100%);max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);will-change:transform,opacity}
+.mbox.wide{width:min(880px,100%)}
+.grab{display:none}
+.mh{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 12px;position:sticky;top:0;background:var(--material-strong);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);z-index:2}
+.mh h2{font:600 1.15rem/1.25 var(--display);letter-spacing:-.016em}
+.mh .lknum{font:700 1.6rem/1.1 var(--display);letter-spacing:-.022em}
+.mh .sub{font-size:.8rem;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.mh .ib{margin-left:auto}
+.mbody{padding:6px 20px 22px}
+.mfoot{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:12px 20px 14px;position:sticky;bottom:0;background:var(--material-strong);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-top:1px solid var(--line)}
+.mfoot .left{margin-right:auto}
+.dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:0;font-size:.86rem;background:var(--fill-2);border-radius:12px;overflow:hidden}
+.dl dt,.dl dd{padding:9px 14px;border-bottom:1px solid var(--line)}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0;font-weight:500;text-align:right}
+.dl dt:nth-last-child(2),.dl dd:last-child{border-bottom:0}
+.box{margin-top:18px}
+.box h3{font-size:.75rem;font-weight:600;color:var(--muted);margin:0 0 8px 4px;letter-spacing:.005em}
+.box>p{margin-left:4px}
+.lkcard{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:14px;background:var(--fill-2)}
+.lkcard .big{font:600 2.2rem/1 var(--round);letter-spacing:-.03em;min-width:64px;text-align:center}
+.lkcard .dl{background:var(--surface)}
+.err{color:var(--bad);font-size:.82rem;margin-top:10px}
+.err:empty{display:none}
+.hint{font-size:.78rem;color:var(--muted);margin:4px 2px}
+.histmini{max-height:300px;overflow:auto}
+
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;width:max-content;max-width:calc(100% - 32px);pointer-events:none}
+.toast{background:rgba(30,30,32,.86);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);color:#fff;padding:10px 18px;border-radius:999px;font-size:.82rem;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:toastIn .45s cubic-bezier(.2,1.1,.3,1)}
+.toast.err{background:rgba(196,39,28,.92)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
+
+@media (max-width:1180px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.dgrid{grid-template-columns:1fr}}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .side{position:fixed;z-index:40;top:0;bottom:0;left:0;width:272px;transform:translateX(-104%);transition:transform .35s cubic-bezier(.2,.9,.25,1);padding-top:env(safe-area-inset-top,0px);box-shadow:var(--shadow-lg);border-right:0}
+  .shell.open .side{transform:none}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:35;opacity:0;pointer-events:none;transition:opacity .3s}
+  .shell.open .scrim{opacity:1;pointer-events:auto}
+  .menu-btn{display:inline-grid}
+  .top{padding:8px 16px;flex-wrap:wrap;gap:10px}
+  .gsearch{order:5;width:100%;margin-left:0}
+  .me .nm{display:none}
+  .me{margin-left:auto}
+  .content{padding:4px 16px 40px}
+  .ltitle{font-size:1.65rem}
+  .localbar{margin:0 16px 6px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .fgrid{grid-template-columns:1fr}
+  .dl{grid-template-columns:120px minmax(0,1fr)}
+  #modal{padding:0;align-items:end}
+  .mbox,.mbox.wide{width:100%;max-height:calc(100% - 28px - env(safe-area-inset-top,0px));border-radius:18px 18px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}
+  .grab{display:block;position:absolute;top:0;left:0;right:0;height:0}
+  .grab::after{content:"";position:absolute;left:50%;top:6px;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:var(--line-strong)}
+  .mh{padding-top:22px;touch-action:none;cursor:grab}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}.lk:active,.btn:active{transform:none}}
+@media (prefers-reduced-transparency:reduce){
+  .side,.top.scrolled,.mh,.mfoot,.gres,.toast{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .side{background:var(--surface-2)}.top.scrolled,.mh,.mfoot,.gres{background:var(--surface)}.toast{background:#1C1C1E}
+}
+@media (prefers-contrast:more){
+  .panel,.kpi,.tw,.empty,.mapwrap,.lcard,.mbox{border:1px solid var(--line-strong)}
+  .btn,.inp{box-shadow:inset 0 0 0 1px var(--line-strong)}
+  .lk{box-shadow:inset 0 0 0 1.5px var(--dc)}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="modal" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script>
+'use strict';
+/* =====================================================================
+   CONFIGURAÇÃO: cole aqui os dados do seu projeto no Supabase
+   (Project Settings > API: Project URL e a chave anon public)
+   A chave anon é pública por natureza; a proteção dos dados é feita
+   pelas regras de segurança do banco (script supabase-setup.sql).
+   ===================================================================== */
+const SUPABASE_URL='https://ymvbxrhjxnkclgzoodvn.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_j9gbc-ulggnzf8uiyazW2Q_IERm8PWg';
+
+/* ---------- utilidades ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(3,'0');
+const aid=n=>'a'+pad(n);
+const cid=m=>'c_'+String(m).trim().replace(/[^A-Za-z0-9_-]/g,'_').slice(0,80);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const TAB=uid();
+const isoLocal=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>isoLocal(new Date());
+const tsDay=ts=>{const d=new Date(ts);return isNaN(d)?'':isoLocal(d)};
+const fD=s=>{if(!s)return '—';const m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:String(s)};
+const fTs=ts=>{const d=new Date(ts);return isNaN(d)?'—':d.toLocaleDateString('pt-BR')};
+const fHr=ts=>{const d=new Date(ts);return isNaN(d)?'':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
+const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+const short=n=>{const p=String(n||'').trim().split(/\s+/);return p.length>1?p[0]+' '+p[p.length-1]:p[0]||''};
+
+const ST={
+  disponivel:{l:'Disponível',c:'ok',e:'🟢'},
+  ocupado:{l:'Ocupado',c:'bad',e:'🔴'},
+  reservado:{l:'Reservado',c:'res',e:'🟡'},
+  manutencao:{l:'Manutenção',c:'mnt',e:'⚠️'},
+  inativo:{l:'Inativo',c:'ina',e:'⚪'}
+};
+const CHAVES=['Entregue','Devolvida','Perdida','Não entregue','Segunda via'];
+const SITS=['Ativo','Afastado','Desligado'];
+const TIPOS=['Ocupação','Devolução','Troca','Reserva','Manutenção','Liberação','Alteração de chave','Inativação','Reativação','Notificação','Documento emitido'];
+const TIPO_C={'Ocupação':'bad','Devolução':'ok','Troca':'oli','Reserva':'res','Manutenção':'mnt','Liberação':'ok','Alteração de chave':'neu','Inativação':'ina','Reativação':'neu','Notificação':'res','Documento emitido':'oli'};
+const DEF_CFG={qtd:0,colunas:10,localPadrao:'Vestiário masculino',setores:['Distribuição','Armazém','Administrativo','Vendas','Frota','Manutenção'],turnos:['Diurno','Noturno','Comercial'],razao:'',cnpj:'',prazoGuarda:30,atendimento:'de segunda a sexta-feira, em horário comercial'};
+
+const S={mode:null,me:null,role:null,inApp:false,route:'dashboard',
+  cfg:null,arm:{},col:{},movs:[],acesso:{},pend:{},
+  prof:{},profPending:new Set(),
+  f:{map:{st:''},col:{q:'',sit:'',setor:''},arm:{q:'',st:''},mov:{de:'',ate:'',tipo:'',q:'',arm:''},rel:{t:'ocupacao',q:'',arm:'',st:'',tipo:'',de:'',ate:''}},
+  movQ:null,lock:{},ui:{hist:null,imp:null,hits:null}};
+let DB=null,USER=null,DL=null;
+
+const CFG=()=>({...DEF_CFG,...(S.cfg||{})});
+const arms=()=>Object.values(S.arm).sort((a,b)=>a.numero-b.numero);
+const activeArms=()=>arms().filter(a=>a.status!=='inativo');
+const cols=()=>Object.values(S.col).sort((a,b)=>String(a.nome).localeCompare(String(b.nome),'pt-BR'));
+const armOf=n=>S.arm[aid(n)];
+const isAdmin=()=>S.role==='admin';
+const lname=n=>'Armário '+pad(n);
+
+/* ---------- ícones ---------- */
+const I={
+ dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+ map:'<rect x="3" y="3" width="5" height="18" rx="1"/><rect x="9.5" y="3" width="5" height="18" rx="1"/><rect x="16" y="3" width="5" height="18" rx="1"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.2 2.5 3.6 5.2"/>',
+ locker:'<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><path d="M8.5 6h7M8.5 8h7M15.5 12.5v2.5"/>',
+ swap:'<path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/>',
+ alert:'<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4.5M12 17.2v.3"/>',
+ key:'<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.7-8.7M17 6l2.5 2.5M14.5 8.5l2 2"/>',
+ doc:'<path d="M7 2.5h7l4 4v15H7z"/><path d="M13.5 2.5V7H18M9.5 12.5l2 2 3.5-4M9.5 18h6"/>',
+ report:'<path d="M6 2.5h9l4 4V21.5H6z"/><path d="M14.5 2.5V7h4.5M9 12h7M9 15.5h7M9 19h4"/>',
+ shield:'<path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+ menu:'<path d="M3 6h18M3 12h18M3 18h18"/>',
+ out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',
+ x:'<path d="M6 6l12 12M18 6 6 18"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ down:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+ up:'<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>'
+};
+const ic=(k)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+const FARID_LOGO='data:image/jpeg;base64,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';
+const LOGO='<svg viewBox="0 0 26 34" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1.5" y="1.5" width="23" height="31" rx="2"/><path d="M6.5 6h13M6.5 9h13M6.5 12h13" stroke-width="1.4"/><path d="M19.5 18v5" stroke-width="2.4" stroke-linecap="round"/></svg>';
+
+/* ---------- feedback ---------- */
+function toast(msg,kind){const t=document.createElement('div');t.className='toast'+(kind==='err'?' err':'');t.textContent=msg;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),kind==='err'?6000:3200)}
+function errMsg(e){
+  if(e&&e.code){
+    if(e.code==='invalid_argument')return 'Você não tem permissão para esta alteração. Verifique seu nível de acesso ao aplicativo.';
+    if(e.code==='quota_exceeded')return 'O limite de armazenamento do aplicativo foi atingido. Avise o Administrador RH.';
+    if(e.code==='resource_exhausted')return 'Muitas operações seguidas. Aguarde alguns segundos e tente de novo.';
+    if(e.code==='revoked')return 'Seu acesso foi alterado. Recarregue a página.';
+    if(e.code==='unavailable')return 'Conexão instável. Tente novamente.';
+  }
+  return (e&&e.message)||'Não foi possível concluir a operação.';
+}
+const fail=m=>{throw new Error(m)};
+
+/* ---------- armazenamento (Supabase) ---------- */
+const KEY={armarios:'arm',colaboradores:'col',acesso:'acesso',pendencias:'pend'};
+let SB=null;
+function sbErr(error){if(!error)return;const m=String(error.message||'');
+  if(/row-level security|permission denied|violates row/i.test(m))fail('Você não tem permissão para esta alteração. Peça ao Administrador RH para revisar seu perfil.');
+  if(/Failed to fetch|NetworkError|network/i.test(m))fail('Sem conexão com o servidor. Verifique a internet e tente de novo.');
+  fail(m||'Não foi possível salvar.');}
+function setLocal(col,id,data){
+  if(col==='config')S.cfg=data;
+  else S[KEY[col]]={...S[KEY[col]],[id]:data};
+}
+async function put(col,id,data){
+  if(col==='acesso'){
+    const {error}=await SB.from('perfis').update({perfil:data.perfil,ativo:!!data.ativo,nome:data.nome}).eq('user_id',id);sbErr(error);
+    S.acesso={...S.acesso,[id]:{...(S.acesso[id]||{}),...data}};computeRole();schedule();return;
+  }
+  const lk=col+'/'+id,ver=S.lock[lk];delete S.lock[lk];
+  if(ver){
+    const {data:r,error}=await SB.from(col).update({data}).eq('id',id).eq('updated_at',ver).select('id');sbErr(error);
+    if(!r||!r.length)fail('Outro usuário alterou este registro agora. A tela foi atualizada; confira e tente de novo.');
+  }else{
+    const {error}=await SB.from(col).upsert({id,data});sbErr(error);
+  }
+  setLocal(col,id,data);schedule();
+}
+async function addMov(m){
+  const mov={ts:new Date().toISOString(),resp:S.me.id,obs:'',...m};
+  const id=uid();
+  const {error}=await SB.from('movs').insert({id,ts:mov.ts,armario:mov.armario||null,colab_id:mov.colabId||null,data:mov});sbErr(error);
+  if(!S.movs.some(x=>x.id===id))S.movs=[{...mov,id},...S.movs];
+  schedule();
+}
+/* bloqueio otimista: guarda a versão lida e só grava se ninguém alterou no meio */
+async function guard(n,check){
+  const id=aid(n);
+  const {data:row,error}=await SB.from('armarios').select('data,updated_at').eq('id',id).maybeSingle();sbErr(error);
+  try{const r=check(row?{...row.data}:null);if(row)S.lock['armarios/'+id]=row.updated_at;return r}
+  catch(e){delete S.lock['armarios/'+id];throw e}
+}
+const movRow=r=>({...(r.data||{}),id:r.id,ts:r.ts||(r.data&&r.data.ts)});
+async function queryMovs(field,val){
+  const colName=field==='colabId'?'colab_id':field;
+  const {data,error}=await SB.from('movs').select('*').eq(colName,val).order('ts',{ascending:false}).limit(1000);
+  if(error)return S.movs.filter(m=>m[field]===val);
+  return data.map(movRow);
+}
+async function loadPeriod(de,ate){
+  const key=de+'|'+ate;
+  if(!de){S.movQ=null;schedule();return}
+  if(S.movQ&&S.movQ.key===key)return;
+  const oldest=S.movs.length?tsDay(S.movs[S.movs.length-1].ts):'';
+  if(S.movs.length<1000&&(!oldest||oldest<=de)){S.movQ=null;schedule();return}
+  let q=SB.from('movs').select('*').gte('ts',new Date(de+'T00:00:00').toISOString());
+  if(ate)q=q.lte('ts',new Date(ate+'T23:59:59').toISOString());
+  const {data,error}=await q.order('ts',{ascending:false}).limit(1000);
+  S.movQ=error?null:{key,rows:data.map(movRow)};schedule();
+}
+const movSource=(f)=>S.movQ&&S.movQ.key===(f.de+'|'+f.ate)?S.movQ.rows:S.movs;
+
+function ensureNames(){}
+function nm(id){
+  if(!id)return '—';
+  if(String(id).startsWith('migr:'))return String(id).slice(5);
+  const p=S.acesso[id];
+  if(p&&(p.nome||p.email))return p.nome||p.email;
+  return id===S.me?.id?(S.me.name||'Você'):'Usuário RH';
+}
+
+/* ---------- inicialização ---------- */
+const CONFIG_OK=()=>/^https:\/\/.+\.supabase\.co\/?$/.test(SUPABASE_URL)&&SUPABASE_ANON_KEY.length>40;
+async function fetchAll(table,sel='*'){
+  const out=[];for(let from=0;;from+=1000){const {data,error}=await SB.from(table).select(sel).range(from,from+999);sbErr(error);out.push(...data);if(data.length<1000)break}return out;
+}
+async function loadAll(){
+  const [cfg,ar,co,pe,pf,mv]=await Promise.all([
+    SB.from('config').select('*').eq('id','main').maybeSingle(),fetchAll('armarios'),fetchAll('colaboradores'),fetchAll('pendencias'),fetchAll('perfis'),
+    SB.from('movs').select('*').order('ts',{ascending:false}).limit(1000)]);
+  S.cfg=cfg.data?cfg.data.data:null;
+  const map=rows=>{const o={};rows.forEach(r=>{o[r.id]=r.data});return o};
+  S.arm=map(ar);S.col=map(co);S.pend=map(pe);
+  S.acesso={};pf.forEach(r=>{S.acesso[r.user_id]=r});
+  S.movs=mv.data?mv.data.map(movRow):[];
+}
+let RT=null;
+function startRealtime(){
+  if(RT)return;
+  RT=SB.channel('armarios-rh').on('postgres_changes',{event:'*',schema:'public'},p=>{
+    const t=p.table,del=p.eventType==='DELETE',row=del?p.old:p.new;
+    if(t==='movs'){if(!del&&!S.movs.some(m=>m.id===row.id)){S.movs=[movRow(row),...S.movs].sort((a,b)=>String(b.ts).localeCompare(String(a.ts))).slice(0,1000)}}
+    else if(t==='perfis'){const o={...S.acesso};if(del)delete o[row.user_id];else o[row.user_id]=row;S.acesso=o;computeRole()}
+    else if(t==='config'){if(!del&&row.id==='main')S.cfg=row.data}
+    else if(KEY[t]){const o={...S[KEY[t]]};if(del)delete o[row.id];else o[row.id]=row.data;S[KEY[t]]=o}
+    schedule();
+  }).subscribe();
+}
+async function afterLogin(user){
+  renderLogin('loading');
+  S.me={id:user.id,email:user.email,name:''};
+  try{await loadAll()}catch(e){renderLogin('login',errMsg(e));return}
+  computeRole();
+  const p=S.acesso[user.id];S.me.name=(p&&p.nome)||user.email;
+  if(!S.role){renderLogin('denied');return}
+  startRealtime();enterApp();
+}
+async function boot(){
+  if(!CONFIG_OK()||!window.supabase){renderLogin('config');return}
+  SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  S.mode='db';
+  SB.auth.onAuthStateChange((ev)=>{if(ev==='PASSWORD_RECOVERY'){S.inApp=false;closeModal();renderLogin('recovery')}else if(ev==='SIGNED_OUT'&&S.inApp){S.inApp=false;closeModal();renderLogin('login','Sua sessão terminou. Entre novamente.')}});
+  if(/type=recovery/.test(location.hash)){renderLogin('loading');return}
+  const {data}=await SB.auth.getSession();
+  if(data&&data.session)afterLogin(data.session.user);else renderLogin('login');
+}
+function computeRole(){
+  if(!S.me)return;
+  const r=S.acesso[S.me.id];
+  S.role=r&&r.ativo?(r.perfil==='admin'?'admin':'usuario'):null;
+  if(S.inApp&&!S.role){S.inApp=false;closeModal();renderLogin('denied')}
+}
+
+/* ---------- login ---------- */
+function renderLogin(state,msg){
+  let body='';
+  if(state==='loading')body=`<p class="muted">Carregando…</p>`;
+  else if(state==='login')body=`<form data-form="login" novalidate>
+    <label class="field" style="text-align:left;margin-bottom:12px"><span>E-mail</span><input class="inp" type="email" name="email" autocomplete="username" required></label>
+    <label class="field" style="text-align:left;margin-bottom:16px"><span>Senha</span><input class="inp" type="password" name="senha" autocomplete="current-password" required></label>
+    <button class="btn pri" style="width:100%">Entrar</button><div class="err" id="ferr" role="alert">${esc(msg||'')}</div></form>
+    <p class="lnote"><a href="#" data-act="esqueci">Esqueci minha senha</a></p>`;
+  else if(state==='recovery')body=`<form data-form="novasenha" novalidate><p style="text-align:left;margin-top:0">Defina sua nova senha.</p>
+    <label class="field" style="text-align:left;margin-bottom:12px"><span>Nova senha</span><input class="inp" type="password" name="s1" autocomplete="new-password" minlength="8" required></label>
+    <label class="field" style="text-align:left;margin-bottom:16px"><span>Repita a nova senha</span><input class="inp" type="password" name="s2" autocomplete="new-password" required></label>
+    <button class="btn pri" style="width:100%">Salvar nova senha</button><div class="err" id="ferr" role="alert"></div></form>`;
+  else if(state==='denied')body=`<div class="who-row"><div><b>${esc(S.me?.email||'')}</b><div class="small muted">Acesso não liberado</div></div></div>
+    <p style="text-align:left">Sua conta existe, mas ainda não foi liberada ou está desativada. Peça ao Administrador RH para ativar seu acesso em Usuários.</p>
+    <button class="btn pri" style="width:100%;margin-bottom:8px" data-act="retry">Tentar de novo</button><button class="btn" style="width:100%" data-act="logout">Sair</button>`;
+  else if(state==='config')body=`<p style="text-align:left">Falta configurar a conexão com o banco de dados. Abra o arquivo <b>index.html</b> no GitHub e preencha <b>SUPABASE_URL</b> e <b>SUPABASE_ANON_KEY</b> no início do código.</p>`;
+  $('#root').innerHTML=`<div class="login"><div class="lcard"><div class="lplate"><img src="${FARID_LOGO}" alt="Farid Distribuidora"></div>
+    <h1>Controle de Armários</h1><p class="sub">Recursos Humanos, unidade Patos de Minas/MG</p>${body}</div></div>`;
+  S.loginState=state;
+  const f=$('#root input');if(f)f.focus();
+}
+function enterApp(){S.inApp=true;renderShell();go(S.route)}
+
+/* ---------- shell ---------- */
+const NAV=[['dashboard','Dashboard','dash'],['mapa','Mapa de Armários','map'],['colaboradores','Colaboradores','users'],['armarios','Armários','locker'],['movimentacoes','Movimentações','swap'],['pendencias','Pendências','alert'],['relatorios','Relatórios','report'],['documentos','Documentos','doc'],['usuarios','Usuários','shield'],['configuracoes','Configurações','gear']];
+function renderShell(){
+  $('#root').innerHTML=`<div class="shell" id="shell">
+  <aside class="side" aria-label="Menu principal"><div class="brand"><div class="plate"><img src="${FARID_LOGO}" alt="Farid Distribuidora"></div><div><b>Controle de Armários</b><span>RH, unidade Patos de Minas/MG</span></div></div>
+  <nav class="nav" id="nav"></nav><div class="side-foot">Armários masculinos da unidade Patos de Minas</div></aside>
+  <div class="main">
+    <header class="top">
+      <button class="ib menu-btn" data-act="menu" aria-label="Abrir menu">${ic('menu')}</button>
+      <h1 id="ptitle"></h1>
+      <div class="gsearch">${ic('search')}<input id="gs" type="search" autocomplete="off" placeholder="Buscar nome, matrícula ou nº do armário" aria-label="Busca global"><div class="gres" id="gres" hidden></div></div>
+      <div class="me"><span class="av" aria-hidden="true">${esc((S.me.name||S.me.email||'?').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase())}</span><div class="nm">${esc(S.me.name||'Usuário')}<span>${isAdmin()?'Administrador RH':'Usuário RH'}</span></div>
+      <button class="ib" data-act="minha-senha" title="Alterar senha" aria-label="Alterar senha">${ic('key')}</button><button class="ib" data-act="logout" title="Sair" aria-label="Sair">${ic('out')}</button></div>
+    </header>
+    <main class="content" id="content"><h2 class="ltitle" id="ltitle"></h2><div id="phead"></div><div id="pbody"></div></main>
+  </div>
+  <div class="scrim" data-act="menu"></div></div>`;
+  $('.main').addEventListener('scroll',onMainScroll,{passive:true});
+}
+function onMainScroll(){const mn=$('.main'),t=$('.top');if(!mn||!t)return;t.classList.toggle('scrolled',mn.scrollTop>6);t.classList.toggle('titled',mn.scrollTop>44)}
+function renderNav(){
+  const pc=pendList().length;
+  $('#nav').innerHTML=NAV.filter(([r])=>r!=='usuarios'||isAdmin()).map(([r,l,i])=>`<button data-act="go" data-r="${r}" class="${S.route===r?'on':''}" ${S.route===r?'aria-current="page"':''}>${ic(i)}<span>${l}</span>${r==='pendencias'&&pc?`<span class="cnt">${pc}</span>`:''}</button>`).join('');
+}
+function go(r){
+  if(!PAGES[r]||(r==='usuarios'&&!isAdmin()))r='dashboard';
+  S.route=r;S.movQ=null;
+  $('#shell').classList.remove('open');
+  const ttl=NAV.find(n=>n[0]===r)[1];$('#ptitle').textContent=ttl;$('#ltitle').textContent=ttl;
+  const P=PAGES[r];
+  $('#phead').innerHTML=P.head?P.head():'';
+  $('#pbody').innerHTML=P.body();
+  renderNav();
+  const mn=$('.main');if(mn){mn.scrollTop=0;onMainScroll()}
+}
+let rq=0;
+function schedule(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;if(!S.inApp)return;renderNav();$('#pbody').innerHTML=PAGES[S.route].body();refreshModal()})}
+
+/* ---------- helpers de UI ---------- */
+const bdg=(st)=>{const s=ST[st]||ST.disponivel;return `<span class="bdg ${s.c}">${s.l}</span>`};
+const sitB=s=>`<span class="bdg ${s==='Ativo'?'ok':s==='Afastado'?'res':'bad'}">${esc(s||'—')}</span>`;
+const tipoB=t=>`<span class="bdg ${TIPO_C[t]||'neu'}">${esc(t)}</span>`;
+const keyB=k=>`<span class="bdg ${k==='Perdida'?'bad':k==='Entregue'?'oli':k==='Devolvida'?'ok':'neu'}">${esc(k||'—')}</span>`;
+const opts=(list,sel,blank)=>(blank!=null?`<option value="">${esc(blank)}</option>`:'')+list.map(o=>{const v=Array.isArray(o)?o[0]:o,l=Array.isArray(o)?o[1]:o;return `<option value="${esc(v)}" ${String(v)===String(sel??'')?'selected':''}>${esc(l)}</option>`}).join('');
+const empty=(t,s,btn)=>`<div class="empty"><b>${t}</b>${s?`<span>${s}</span>`:''}${btn?`<div>${btn}</div>`:''}</div>`;
+function tbl(head,rows,emptyMsg){
+  if(!rows.length)return empty(emptyMsg||'Nenhum registro encontrado.');
+  return `<div class="tw"><table class="tbl"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function movRows(list){
+  ensureNames(list.map(m=>m.resp));
+  return list.map(m=>`<tr><td>${fTs(m.ts)}</td><td>${fHr(m.ts)}</td><td>${tipoB(m.tipo)}</td><td>${m.armario?`<a href="#" data-act="armario" data-n="${m.armario}">${pad(m.armario)}</a>`:'—'}</td><td>${m.colabId&&S.col[m.colabId]?`<a href="#" data-act="colab" data-id="${esc(m.colabId)}">${esc(m.nome||'')}</a>`:esc(m.nome||'—')}</td><td>${esc(m.matricula||'—')}</td><td>${esc(nm(m.resp))}</td><td class="obs">${esc(m.obs||'')}</td></tr>`);
+}
+const MOVH=['Data','Hora','Tipo','Armário','Colaborador','Matrícula','Responsável','Observação'];
+
+/* pendências derivadas */
+function pendList(){
+  const out=[];
+  for(const c of cols())if(c.situacao==='Desligado')for(const n of(c.armarios||[]))out.push({k:'desligado',c,a:armOf(n),n});
+  for(const a of arms()){
+    if(a.status==='inativo')continue;
+    if((a.status!=='ocupado'&&['Entregue','Perdida'].includes(a.chaveSit))||(a.status==='ocupado'&&a.chaveSit==='Perdida'))out.push({k:'chave',a,n:a.numero});
+    if(a.status==='manutencao')out.push({k:'manut',a,n:a.numero});
+    if(a.status==='reservado')out.push({k:'reserva',a,n:a.numero});
+  }
+  for(const a of arms())if(a.notif&&a.status!=='inativo')out.push({k:'notif',a,n:a.numero,venc:new Date(a.notif.prazo)<new Date()});
+  for(const p of Object.values(S.pend))if(!p.resolvida)out.push({k:'manual',p});
+  return out;
+}
+const PK={desligado:'Desligados com armário',chave:'Chaves não devolvidas',manut:'Armários em manutenção',reserva:'Armários reservados',notif:'Notificações de 48 horas',manual:'Registradas pelo RH'};
+
+/* ---------- páginas ---------- */
+const PAGES={};
+
+PAGES.dashboard={body(){
+  const A=activeArms(),tot=A.length;
+  if(!tot)return empty('Nenhum armário cadastrado ainda.',isAdmin()?'Defina a quantidade de armários em Configurações para gerar o mapa.':'Peça ao Administrador RH para definir a quantidade de armários.',isAdmin()?`<button class="btn pri" data-act="go" data-r="configuracoes">Abrir Configurações</button>`:'');
+  const cnt=k=>A.filter(a=>a.status===k).length;
+  const oc=cnt('ocupado'),di=cnt('disponivel'),re=cnt('reservado'),ma=cnt('manutencao'),pct=Math.round(oc/tot*100);
+  const kpi=(l,v,c,s)=>`<div class="kpi" style="--k:${c&&c!=='olive'?`var(--${c}-dot)`:'var(--olive)'}"><div class="l">${l}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`;
+  const seg=(k,v)=>v?`<i style="width:${v/tot*100}%;background:var(--${ST[k].c}-dot)" title="${ST[k].l}: ${v}"></i>`:'';
+  const byField=f=>{const m={};for(const a of A)if(a.status==='ocupado'){const c=S.col[a.colabId];const k=(c&&c[f])||'Não informado';m[k]=(m[k]||0)+1}return Object.entries(m).sort((a,b)=>b[1]-a[1])};
+  const bars=list=>{if(!list.length)return '<p class="small muted">Sem armários ocupados.</p>';const mx=Math.max(...list.map(x=>x[1]));return `<div class="bars">${list.slice(0,7).map(([l,v])=>`<div class="brow"><span class="lb" title="${esc(l)}">${esc(l)}</span><span class="t"><i style="width:${v/mx*100}%"></i></span><span class="vv">${v}</span></div>`).join('')}</div>`};
+  const P=pendList(),groups=['desligado','notif','chave','manut','reserva','manual'];
+  const last=S.movs.slice(0,6);
+  return `<section class="kpis">${kpi('Total de armários',tot)}${kpi('Ocupados',oc,'bad')}${kpi('Disponíveis',di,'ok')}${kpi('Reservados',re,'res')}${kpi('Em manutenção',ma,'mnt')}${kpi('Utilização',pct+'%','olive',`${oc} de ${tot} ocupados`)}</section>
+  <div class="dgrid">
+    <section class="panel"><h2>Utilização dos armários</h2>
+      <div class="sbar" role="img" aria-label="Distribuição por status">${seg('ocupado',oc)}${seg('reservado',re)}${seg('manutencao',ma)}${seg('disponivel',di)}</div>
+      <div class="legend">${['ocupado','reservado','manutencao','disponivel'].map(k=>`<span><span class="dot" style="background:var(--${ST[k].c}-dot)"></span>${ST[k].l} <b>${cnt(k)}</b></span>`).join('')}</div>
+      <div class="subh">Ocupação por turno</div>${bars(byField('turno'))}
+      <div class="subh">Ocupação por setor</div>${bars(byField('setor'))}
+    </section>
+    <section class="panel"><h2>Pendências <button class="btn sm sp" data-act="go" data-r="pendencias">Ver todas</button></h2>
+      ${groups.map(g=>{const n=P.filter(p=>p.k===g).length;return `<button class="pgroup ${n?'':'z'}" data-act="go" data-r="pendencias"><span>${g==='desligado'&&n?'⚠️ ':''}${PK[g]}</span><span class="n" style="color:var(--${n?(g==='desligado'||g==='chave'||g==='notif'?'bad':g==='manut'?'mnt':g==='reserva'?'res':'olive'):'muted'})">${n}</span></button>`}).join('')}
+    </section>
+  </div>
+  <section class="panel"><h2>Últimas movimentações <button class="btn sm sp" data-act="go" data-r="movimentacoes">Ver histórico</button></h2>
+    ${last.length?tbl(MOVH,movRows(last)):'<p class="small muted">Nenhuma movimentação registrada.</p>'}</section>`;
+}};
+
+PAGES.mapa={
+ head(){return ''},
+ body(){
+  const all=arms();
+  if(!all.length)return empty('O mapa está vazio.',isAdmin()?'Defina a quantidade de armários em Configurações.':'Peça ao Administrador RH para cadastrar os armários.',isAdmin()?`<button class="btn pri" data-act="go" data-r="configuracoes">Abrir Configurações</button>`:'');
+  const f=S.f.map.st,c=CFG();
+  const cnt=k=>all.filter(a=>a.status===k).length;
+  const chips=`<div class="seg" role="group" aria-label="Filtrar por status"><button class="${!f?'on':''}" data-act="mapf" data-st="" aria-pressed="${!f}">Todos <b>${all.length}</b></button>`+['disponivel','ocupado','reservado','manutencao'].map(k=>`<button class="${f===k?'on':''}" data-act="mapf" data-st="${k}" aria-pressed="${f===k}"><span class="d" style="background:var(--${ST[k].c}-dot)"></span>${ST[k].l} <b>${cnt(k)}</b></button>`).join('')+'</div>';
+  const tiles=all.map(a=>{
+    const col=a.colabId?S.col[a.colabId]:null;
+    let w='';if(a.status==='ocupado')w=short(col?.nome);else if(a.status==='reservado')w=a.reservaPara&&S.col[a.reservaPara]?short(S.col[a.reservaPara].nome):'Reservado';else if(a.status==='manutencao')w='Manutenção';else if(a.status==='inativo')w='Inativo';else w='Livre';
+    const flag=(col&&col.situacao==='Desligado')||a.chaveSit==='Perdida'?'<span class="flag" title="Pendência">⚠️</span>':'';
+    return `<button class="lk ${a.status} ${f&&a.status!==f?'dim':''}" data-act="armario" data-n="${a.numero}" title="${esc(lname(a.numero)+', '+ST[a.status].l+(col?', '+col.nome:''))}"><span class="s"></span>${flag}<span class="n">${pad(a.numero)}</span><span class="w">${esc(w)}</span></button>`}).join('');
+  return `<div class="maptool">${chips}<span class="small muted" style="margin-left:auto">${c.colunas} colunas, conforme Configurações</span></div>
+  <div class="mapwrap"><div class="map" style="--cols:${Math.max(1,+c.colunas||10)}">${tiles}</div><div class="floor"></div></div>
+  <p class="mapnote">Toque em um armário para ver detalhes e registrar movimentações. ⚠️ indica pendência.</p>`;
+ }};
+
+PAGES.colaboradores={
+ head(){const f=S.f.col,c=CFG();return `<div class="toolbar">
+   <input class="inp grow" type="search" placeholder="Buscar por nome ou matrícula" value="${esc(f.q)}" data-f="col.q" aria-label="Buscar colaborador">
+   <select class="inp" data-f="col.sit" aria-label="Situação">${opts(SITS,f.sit,'Todas as situações')}</select>
+   <select class="inp" data-f="col.setor" aria-label="Setor">${opts(c.setores,f.setor,'Todos os setores')}</select>
+   <span class="sp"></span>
+   <button class="btn" data-act="importar">${ic('up')}Importar</button>
+   <button class="btn pri" data-act="novo-colab">${ic('plus')}Novo colaborador</button></div>`},
+ body(){
+  const f=S.f.col,q=norm(f.q);
+  const list=cols().filter(c=>(!f.sit||c.situacao===f.sit)&&(!f.setor||c.setor===f.setor)&&(!q||norm(c.nome).includes(q)||norm(c.matricula).includes(q)));
+  if(!Object.keys(S.col).length)return empty('Nenhum colaborador cadastrado.','Cadastre um a um ou importe uma planilha com a lista de colaboradores.',`<button class="btn" data-act="importar">Importar planilha</button> <button class="btn pri" data-act="novo-colab">Novo colaborador</button>`);
+  return `<p class="count">${list.length} colaborador(es)</p>`+tbl(['Matrícula','Nome','Cargo','Setor','Turno','Situação','Armário'],list.map(c=>`<tr class="click" data-act="colab" data-id="${esc(c.id)}"><td>${esc(c.matricula)}</td><td><b>${esc(c.nome)}</b></td><td>${esc(c.cargo||'—')}</td><td>${esc(c.setor||'—')}</td><td>${esc(c.turno||'—')}</td><td>${sitB(c.situacao)}</td><td>${(c.armarios||[]).length?(c.armarios.map(n=>`<span class="num">${pad(n)}</span>`).join(', ')):'<span class="muted small">Sem armário</span>'}</td></tr>`));
+ }};
+
+PAGES.armarios={
+ head(){const f=S.f.arm;return `<div class="toolbar">
+   <input class="inp grow" type="search" placeholder="Buscar nº do armário, chave ou ocupante" value="${esc(f.q)}" data-f="arm.q" aria-label="Buscar armário">
+   <select class="inp" data-f="arm.st" aria-label="Status">${opts(Object.entries(ST).map(([k,v])=>[k,v.l]),f.st,'Todos os status')}</select>
+   <span class="sp"></span>${isAdmin()?`<button class="btn pri" data-act="novo-arm">${ic('plus')}Cadastrar armário</button>`:''}</div>`},
+ body(){
+  const f=S.f.arm,q=norm(f.q);
+  const list=arms().filter(a=>{const c=a.colabId?S.col[a.colabId]:null;return(!f.st||a.status===f.st)&&(!q||pad(a.numero).includes(q.replace(/^0+/,''))||String(a.numero)===q.replace(/^0+/,'')||norm(a.chaveNum).includes(q)||(c&&norm(c.nome).includes(q)))});
+  if(!arms().length)return empty('Nenhum armário cadastrado.',isAdmin()?'Gere os armários em Configurações ou cadastre individualmente.':'');
+  return `<p class="count">${list.length} armário(s)</p>`+tbl(['Nº','Status','Ocupante','Localização','Nº chave','Situação da chave','Observações',''],list.map(a=>{const c=a.colabId?S.col[a.colabId]:null;return `<tr class="click" data-act="armario" data-n="${a.numero}"><td class="num">${pad(a.numero)}</td><td>${bdg(a.status)}</td><td>${c?esc(c.nome):'<span class="muted">—</span>'}</td><td>${esc(a.localizacao||'—')}</td><td>${esc(a.chaveNum||'—')}</td><td>${keyB(a.chaveSit)}</td><td class="obs">${esc(a.obs||'')}</td><td class="acts"><button class="btn sm" data-act="edit-arm" data-n="${a.numero}">Editar</button></td></tr>`}));
+ }};
+
+PAGES.movimentacoes={
+ head(){const f=S.f.mov;return `<div class="toolbar">
+   <button class="btn pri" data-act="vincular">${ic('locker')}Vincular armário</button>
+   <button class="btn" data-act="pick-dev">Registrar devolução</button>
+   <button class="btn" data-act="pick-troca">${ic('swap')}Trocar armário</button></div>
+   <div class="toolbar">
+   <label class="field"><span>De</span><input class="inp" type="date" value="${esc(f.de)}" data-f="mov.de"></label>
+   <label class="field"><span>Até</span><input class="inp" type="date" value="${esc(f.ate)}" data-f="mov.ate"></label>
+   <label class="field"><span>Tipo</span><select class="inp" data-f="mov.tipo">${opts(TIPOS,f.tipo,'Todos')}</select></label>
+   <label class="field"><span>Armário</span><input class="inp" type="number" min="1" style="width:100px" value="${esc(f.arm)}" data-f="mov.arm"></label>
+   <label class="field grow"><span>Colaborador ou matrícula</span><input class="inp" type="search" value="${esc(f.q)}" data-f="mov.q"></label></div>`},
+ body(){
+  const f=S.f.mov,list=filtMovs(movSource(f),f);
+  return `<p class="count">${list.length} movimentação(ões)${list.length>=1000?', exibindo as 1.000 mais recentes do filtro':''}</p>`+tbl(MOVH,movRows(list.slice(0,500)),'Nenhuma movimentação para os filtros escolhidos.');
+ }};
+function filtMovs(list,f){const q=norm(f.q),an=f.arm?+f.arm:0;return list.filter(m=>(!f.tipo||m.tipo===f.tipo)&&(!an||m.armario===an)&&(!q||norm(m.nome).includes(q)||norm(m.matricula).includes(q))&&(!f.de||tsDay(m.ts)>=f.de)&&(!f.ate||tsDay(m.ts)<=f.ate))}
+
+PAGES.pendencias={
+ head(){return `<div class="toolbar"><span class="muted small">Pendências são calculadas automaticamente a partir dos armários e colaboradores. Registre outras manualmente quando precisar.</span><span class="sp"></span><button class="btn pri" data-act="pend-nova">${ic('plus')}Registrar pendência</button></div>`},
+ body(){
+  const P=pendList();
+  const sec=(k,head,rows)=>{const items=P.filter(p=>p.k===k);return `<section class="panel"><h2>${PK[k]} <span class="bdg ${items.length?'bad':'neu'}" style="margin-left:4px">${items.length}</span></h2>${items.length?tbl(head,items.map(rows)):'<p class="small muted">Nenhuma pendência.</p>'}</section>`};
+  const lastMov=a=>a&&a.ultimaMov?fTs(a.ultimaMov)+' '+fHr(a.ultimaMov):'—';
+  const des=P.filter(p=>p.k==='desligado');
+  return `<div class="stack">
+  ${des.length?`<div class="alert-h" role="alert">⚠️ COLABORADOR DESLIGADO COM ARMÁRIO VINCULADO (${des.length})</div>`:''}
+  ${sec('desligado',['Nome','Matrícula','Armário','Situação da chave','Última movimentação',''],p=>`<tr><td><a href="#" data-act="colab" data-id="${esc(p.c.id)}">${esc(p.c.nome)}</a></td><td>${esc(p.c.matricula)}</td><td class="num">${pad(p.n)}</td><td>${keyB(p.a?.chaveSit)}</td><td>${lastMov(p.a)}</td><td class="acts"><button class="btn sm pri" data-act="devolver" data-n="${p.n}">Registrar devolução</button></td></tr>`)}
+  ${sec('chave',['Armário','Status','Nº chave','Situação da chave','Ocupante',''],p=>{const c=p.a.colabId?S.col[p.a.colabId]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${bdg(p.a.status)}</td><td>${esc(p.a.chaveNum||'—')}</td><td>${keyB(p.a.chaveSit)}</td><td>${c?esc(c.nome):'—'}</td><td class="acts"><button class="btn sm" data-act="edit-arm" data-n="${p.n}">Atualizar chave</button></td></tr>`})}
+  ${sec('manut',['Armário','Localização','Observação','Desde',''],p=>`<tr><td class="num">${pad(p.n)}</td><td>${esc(p.a.localizacao||'—')}</td><td class="obs">${esc(p.a.manutObs||p.a.obs||'')}</td><td>${lastMov(p.a)}</td><td class="acts"><button class="btn sm" data-act="concluir-manut" data-n="${p.n}">Concluir manutenção</button></td></tr>`)}
+  ${sec('reserva',['Armário','Reservado para','Observação','Desde',''],p=>{const c=p.a.reservaPara?S.col[p.a.reservaPara]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${c?esc(c.nome):'—'}</td><td class="obs">${esc(p.a.reservaObs||'')}</td><td>${lastMov(p.a)}</td><td class="acts"><button class="btn sm" data-act="armario" data-n="${p.n}">Abrir</button></td></tr>`})}
+  ${sec('notif',['Armário','Usuário cadastrado','Prazo','Situação',''],p=>{const c=p.a.colabId?S.col[p.a.colabId]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${c?esc(c.nome):'—'}</td><td>${fTs(p.a.notif.prazo)} ${fHr(p.a.notif.prazo)}</td><td>${p.venc?'<span class="bdg bad">Prazo vencido</span>':'<span class="bdg res">No prazo</span>'}</td><td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${p.n}">Compareceu</button> <button class="btn sm ${p.venc?'pri':''}" data-act="doc-abert" data-n="${p.n}">Termo de abertura</button></td></tr>`})}
+  ${sec('manual',['Registrada em','Descrição','Armário','Registrada por',''],p=>{ensureNames([p.p.por]);return `<tr><td>${fTs(p.p.criadaEm)}</td><td>${esc(p.p.texto)}</td><td>${p.p.armario?pad(p.p.armario):'—'}</td><td>${esc(nm(p.p.por))}</td><td class="acts"><button class="btn sm" data-act="pend-resolver" data-id="${esc(p.p.id)}">Marcar como resolvida</button></td></tr>`})}
+  </div>`;
+ }};
+
+/* relatórios */
+const REL={ocupacao:'Ocupação',disponiveis:'Armários disponíveis',ocupados:'Armários ocupados',pendencias:'Pendências',historico:'Histórico'};
+function report(){
+  const f=S.f.rel,q=norm(f.q),an=f.arm?+f.arm:0;
+  const cq=c=>!q||(c&&(norm(c.nome).includes(q)||norm(c.matricula).includes(q)));
+  const A=arms().filter(a=>!an||a.numero===an);
+  if(f.t==='ocupacao'){
+    const L=A.filter(a=>(!f.st||a.status===f.st)&&cq(a.colabId?S.col[a.colabId]:null)&&(!q||a.colabId));
+    return{cols:['Armário','Status','Colaborador','Matrícula','Setor','Turno','Data de ocupação','Situação da chave'],rows:L.map(a=>{const c=a.colabId?S.col[a.colabId]:null;return[pad(a.numero),ST[a.status].l,c?.nome||'',c?.matricula||'',c?.setor||'',c?.turno||'',a.dataOcupacao?fD(a.dataOcupacao):'',a.chaveSit||'']})};
+  }
+  if(f.t==='disponiveis'){const L=A.filter(a=>a.status==='disponivel');return{cols:['Armário','Localização','Nº chave','Situação da chave','Observações'],rows:L.map(a=>[pad(a.numero),a.localizacao||'',a.chaveNum||'',a.chaveSit||'',a.obs||''])}}
+  if(f.t==='ocupados'){const L=A.filter(a=>a.status==='ocupado'&&cq(S.col[a.colabId])&&(!f.de||(a.dataOcupacao||'')>=f.de)&&(!f.ate||(a.dataOcupacao||'')<=f.ate));return{cols:['Armário','Colaborador','Matrícula','Setor','Turno','Data de ocupação','Situação da chave'],rows:L.map(a=>{const c=S.col[a.colabId]||{};return[pad(a.numero),c.nome||'',c.matricula||'',c.setor||'',c.turno||'',fD(a.dataOcupacao),a.chaveSit||'']})}}
+  if(f.t==='pendencias'){
+    const L=pendList().filter(p=>(!an||p.n===an||(p.p&&+p.p.armario===an))&&(!q||cq(p.c||(p.a&&p.a.colabId?S.col[p.a.colabId]:null))));
+    return{cols:['Tipo','Armário','Colaborador','Matrícula','Detalhe'],rows:L.map(p=>{const c=p.c||(p.a&&p.a.colabId?S.col[p.a.colabId]:null)||(p.a&&p.a.reservaPara?S.col[p.a.reservaPara]:null);
+      const det=p.k==='desligado'?'Chave: '+(p.a?.chaveSit||'—'):p.k==='chave'?'Chave: '+p.a.chaveSit:p.k==='manut'?(p.a.manutObs||''):p.k==='reserva'?(p.a.reservaObs||''):p.k==='notif'?('Prazo: '+fTs(p.a.notif.prazo)+' '+fHr(p.a.notif.prazo)):p.p.texto;
+      return[PK[p.k],p.n?pad(p.n):(p.p&&p.p.armario?pad(p.p.armario):''),c?.nome||'',c?.matricula||'',det]})};
+  }
+  const L=filtMovs(movSource(f),{...f,arm:f.arm}).filter(m=>!f.st||(armOf(m.armario)&&armOf(m.armario).status===f.st));
+  ensureNames(L.map(m=>m.resp));
+  return{cols:MOVH,rows:L.map(m=>[fTs(m.ts),fHr(m.ts),m.tipo,m.armario?pad(m.armario):'',m.nome||'',m.matricula||'',nm(m.resp),m.obs||''])};
+}
+PAGES.relatorios={
+ head(){const f=S.f.rel;return `<div class="tabs" role="tablist">${Object.entries(REL).map(([k,l])=>`<button role="tab" aria-selected="${f.t===k}" class="${f.t===k?'on':''}" data-act="rel-tab" data-t="${k}">${l}</button>`).join('')}</div>
+   <div class="toolbar">
+   <label class="field"><span>De</span><input class="inp" type="date" value="${esc(f.de)}" data-f="rel.de"></label>
+   <label class="field"><span>Até</span><input class="inp" type="date" value="${esc(f.ate)}" data-f="rel.ate"></label>
+   <label class="field grow"><span>Colaborador ou matrícula</span><input class="inp" type="search" value="${esc(f.q)}" data-f="rel.q"></label>
+   <label class="field"><span>Armário</span><input class="inp" type="number" min="1" style="width:96px" value="${esc(f.arm)}" data-f="rel.arm"></label>
+   <label class="field"><span>Status</span><select class="inp" data-f="rel.st">${opts(Object.entries(ST).map(([k,v])=>[k,v.l]),f.st,'Todos')}</select></label>
+   <label class="field"><span>Tipo de movimentação</span><select class="inp" data-f="rel.tipo">${opts(TIPOS,f.tipo,'Todos')}</select></label>
+   </div><div class="toolbar"><span class="small muted">Período vale para Histórico e Armários ocupados. Tipo vale para Histórico.</span><span class="sp"></span>
+   <button class="btn" data-act="export" data-fmt="xlsx">${ic('down')}Exportar Excel</button><button class="btn" data-act="export" data-fmt="pdf">${ic('down')}Exportar PDF</button></div>`},
+ body(){const r=report();return `<p class="count">${REL[S.f.rel.t]}: ${r.rows.length} linha(s)</p>`+tbl(r.cols,r.rows.slice(0,500).map(row=>`<tr>${row.map((v,i)=>`<td${i===0&&S.f.rel.t!=='historico'&&S.f.rel.t!=='pendencias'?' class="num"':''}>${esc(v)}</td>`).join('')}</tr>`),'Nenhum dado para os filtros escolhidos.')}
+};
+
+PAGES.usuarios={
+ head(){
+  if(!isAdmin())return '';
+  return `<div class="panel" style="margin-bottom:16px"><h2>Criar usuário</h2>
+   <form data-form="novousuario" novalidate><div class="fgrid">
+    <label class="field"><span>Nome</span><input class="inp" name="nome" autocomplete="off" required></label>
+    <label class="field"><span>E-mail (usado para entrar)</span><input class="inp" type="email" name="email" autocomplete="off" required></label>
+    <label class="field"><span>Senha inicial (mínimo 8 caracteres)</span><input class="inp" type="text" name="senha" autocomplete="off" required></label>
+    <label class="field"><span>Perfil</span><select class="inp" name="perfil">${opts([['usuario','Usuário RH'],['admin','Administrador RH']],'usuario')}</select></label>
+   </div><div class="err" id="ferr" role="alert"></div><div style="margin-top:12px"><button class="btn pri">Criar usuário</button></div></form>
+   <p class="hint" style="margin-top:10px">Passe o e-mail e a senha inicial para a pessoa. Depois de entrar, ela pode trocar a senha em Alterar senha, no topo da tela.</p></div>`},
+ body(){
+  if(!isAdmin())return empty('Área restrita ao Administrador RH.');
+  const ids=Object.keys(S.acesso).sort((a,b)=>nm(a).localeCompare(nm(b),'pt-BR'));
+  const rows=ids.map(id=>{const r=S.acesso[id],me=id===S.me.id;
+    return `<tr><td><b>${esc(r.nome||'—')}</b>${me?' <span class="small muted">(você)</span>':''}</td><td>${esc(r.email||'—')}</td>
+    <td>${me?(r.perfil==='admin'?'Administrador RH':'Usuário RH'):`<select class="inp" data-chg="perfil" data-id="${esc(id)}" aria-label="Perfil">${opts([['usuario','Usuário RH'],['admin','Administrador RH']],r.perfil)}</select>`}</td>
+    <td>${r.ativo?'<span class="bdg ok">Ativo</span>':'<span class="bdg ina">Sem acesso</span>'}</td><td>${fTs(r.desde)}</td>
+    <td class="acts"><button class="btn sm" data-act="user-reset" data-id="${esc(id)}">Enviar link de senha</button> ${me?'':`<button class="btn sm ${r.ativo?'warn':'pri'}" data-act="user-toggle" data-id="${esc(id)}">${r.ativo?'Desativar':'Ativar'}</button>`}</td></tr>`});
+  return tbl(['Nome','E-mail','Perfil','Situação','Desde',''],rows,'Nenhum usuário cadastrado.');
+ }};
+function renderHits(){}
+async function criarUsuario(v){
+  if(!isAdmin())fail('Somente o Administrador RH cria usuários.');
+  const nome=(v.nome||'').trim(),email=(v.email||'').trim().toLowerCase(),senha=v.senha||'',perfil=v.perfil==='admin'?'admin':'usuario';
+  if(!nome)fail('Informe o nome.');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))fail('Informe um e-mail válido.');
+  if(senha.length<8)fail('A senha precisa ter pelo menos 8 caracteres.');
+  const tmp=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false,storageKey:'armarios-rh-signup'}});
+  const {data,error}=await tmp.auth.signUp({email,password:senha,options:{data:{nome}}});
+  if(error){const m=String(error.message||'');
+    if(/already|registered|exists/i.test(m))fail('Já existe um usuário com este e-mail.');
+    if(/not allowed|disabled/i.test(m))fail('O cadastro de novos usuários está desligado no Supabase. Veja o passo 4 do guia.');
+    if(/password/i.test(m))fail('Senha recusada pelo Supabase: '+m);
+    fail(m)}
+  const u=data&&data.user;
+  if(!u||(Array.isArray(u.identities)&&!u.identities.length))fail('Já existe um usuário com este e-mail.');
+  let ok=false;
+  for(let i=0;i<6&&!ok;i++){const {data:r,error:e2}=await SB.from('perfis').update({nome,perfil,ativo:true}).eq('user_id',u.id).select('*');sbErr(e2);
+    if(r&&r.length){ok=true;S.acesso={...S.acesso,[u.id]:r[0]}}else await new Promise(res=>setTimeout(res,500))}
+  if(!ok)fail('O usuário foi criado, mas a liberação falhou. Atualize a página e clique em Ativar na lista.');
+  schedule();
+  return {confirmar:!data.session};
+}
+async function enviarLinkSenha(email){
+  if(!email)fail('Este usuário não tem e-mail cadastrado.');
+  const {error}=await SB.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});sbErr(error);
+}
+function fMinhaSenha(){
+  openModal(()=>formModal('minhasenha','Alterar senha',esc(S.me.email||''),`<div class="fgrid">
+   <label class="field full"><span>Nova senha (mínimo 8 caracteres)</span><input class="inp" type="password" name="s1" autocomplete="new-password" required></label>
+   <label class="field full"><span>Repita a nova senha</span><input class="inp" type="password" name="s2" autocomplete="new-password" required></label></div>`,'Salvar nova senha'));
+}
+async function trocarSenha(v){
+  if((v.s1||'').length<8)fail('A senha precisa ter pelo menos 8 caracteres.');
+  if(v.s1!==v.s2)fail('As duas senhas não são iguais.');
+  const {error}=await SB.auth.updateUser({password:v.s1});sbErr(error);
+}
+
+PAGES.configuracoes={
+ head(){
+  const c=CFG(),ad=isAdmin();
+  return `<form data-form="cfg" class="stack" style="max-width:760px">
+  <section class="panel"><h2>Unidade</h2><dl class="dl"><dt>Unidade</dt><dd>Patos de Minas/MG</dd><dt>Escopo</dt><dd>Somente armários masculinos</dd><dt>Acesso</dt><dd>Exclusivo do RH, sem acesso de colaboradores</dd></dl></section>
+  <section class="panel"><h2>Armários</h2>${ad?'':'<p class="hint" style="margin-bottom:10px">Somente o Administrador RH altera estas configurações.</p>'}
+   <fieldset ${ad?'':'disabled'} style="border:0;padding:0;margin:0"><div class="fgrid">
+   <label class="field"><span>Quantidade de armários</span><input class="inp" type="number" name="qtd" min="0" max="2000" value="${c.qtd}" required></label>
+   <label class="field"><span>Colunas no mapa</span><input class="inp" type="number" name="colunas" min="1" max="40" value="${c.colunas}" required></label>
+   <label class="field full"><span>Localização padrão de novos armários</span><input class="inp" name="localPadrao" value="${esc(c.localPadrao)}"></label>
+   <p class="hint full">Aumentar a quantidade cria os armários que faltam, numerados em sequência. Reduzir inativa os armários excedentes que estiverem livres, sem apagar o histórico.</p>
+   </div></fieldset></section>
+  <section class="panel"><h2>Empresa e documentos</h2><fieldset ${ad?'':'disabled'} style="border:0;padding:0;margin:0"><div class="fgrid">
+   <label class="field full"><span>Razão social (aparece no cabeçalho dos termos)</span><input class="inp" name="razao" value="${esc(c.razao)}" placeholder="Ex.: Nome Empresarial Ltda."></label>
+   <label class="field"><span>CNPJ</span><input class="inp" name="cnpj" value="${esc(c.cnpj)}" placeholder="00.000.000/0000-00"></label>
+   <label class="field"><span>Prazo de guarda dos pertences (dias)</span><input class="inp" type="number" min="1" max="180" name="prazoGuarda" value="${c.prazoGuarda}"></label>
+   <label class="field full"><span>Atendimento do RH (texto da notificação)</span><input class="inp" name="atendimento" value="${esc(c.atendimento)}"></label>
+   </div></fieldset></section>
+  <section class="panel"><h2>Listas de cadastro</h2><fieldset ${ad?'':'disabled'} style="border:0;padding:0;margin:0"><div class="fgrid">
+   <label class="field"><span>Setores (um por linha)</span><textarea class="inp" name="setores" rows="6">${esc(c.setores.join('\n'))}</textarea></label>
+   <label class="field"><span>Turnos (um por linha)</span><textarea class="inp" name="turnos" rows="6">${esc(c.turnos.join('\n'))}</textarea></label>
+   </div></fieldset></section>
+  ${ad?'<div><button class="btn pri">Salvar configurações</button></div>':''}</form>`},
+ body(){return ''}
+};
+
+/* ---------- modais ---------- */
+let MOD=null;
+const mq=q=>window.matchMedia?window.matchMedia(q):{matches:false};
+const RM=mq('(prefers-reduced-motion: reduce)'),MOBILE=mq('(max-width: 860px)');
+/* mola criticamente amortecida (resposta em segundos, amortecimento 1 = sem ultrapassar) */
+function spring({from,to,velocity=0,response=.35,damping=1,onUpdate,onDone}){
+  const k=Math.pow(2*Math.PI/response,2),c=4*Math.PI*damping/response;
+  let x=from,v=velocity,last=null,id=0,stopped=false;
+  const step=t=>{if(stopped)return;if(last==null)last=t;const dt=Math.min(.034,(t-last)/1000);last=t;
+    for(let i=0;i<4;i++){const h=dt/4,a=-k*(x-to)-c*v;v+=a*h;x+=v*h}
+    if(Math.abs(x-to)<.0006&&Math.abs(v)<.02){x=to;onUpdate(x);onDone&&onDone();return}
+    onUpdate(x);id=requestAnimationFrame(step)};
+  id=requestAnimationFrame(step);
+  return{stop(){stopped=true;cancelAnimationFrame(id)}};
+}
+const projectPx=(v,d=.998)=>(v/1000)*d/(1-d);
+const rubber=(o,dim,c=.55)=>(o*dim*c)/(dim+c*Math.abs(o));
+const SH={p:0,anim:null,closeV:0};
+let lastPtr=null;
+document.addEventListener('pointerdown',e=>{lastPtr={x:e.clientX,y:e.clientY}},true);
+document.addEventListener('touchstart',()=>{},{passive:true});
+function applySheet(p){
+  const m=$('#modal'),bk=m.querySelector('.mbk'),bx=m.querySelector('.mbox');if(!bx)return;
+  bk.style.opacity=String(Math.max(0,Math.min(1,p)));
+  if(RM.matches){bx.style.opacity=String(Math.max(0,Math.min(1,p)));bx.style.transform='none';return}
+  if(MOBILE.matches){bx.style.opacity='1';bx.style.transform=`translate3d(0,${(1-p)*bx.offsetHeight}px,0)`}
+  else{bx.style.opacity=String(Math.max(0,Math.min(1,p*1.6)));bx.style.transform=`translate3d(0,${(1-p)*8}px,0) scale(${.9+.1*p})`}
+}
+function animateSheet(to,velocity=0,damping=1,done){
+  if(SH.anim)SH.anim.stop();
+  SH.anim=spring({from:SH.p,to,velocity,damping,response:MOBILE.matches?.4:.32,onUpdate:p=>{SH.p=p;applySheet(p)},onDone:()=>{SH.anim=null;done&&done()}});
+}
+function openModal(fn,o={}){
+  MOD={fn,live:!!o.live};
+  const m=$('#modal');let bx=m.querySelector('.mbox');
+  m.style.pointerEvents='';
+  if(m.hidden||!bx){
+    m.hidden=false;SH.p=0;
+    m.innerHTML=`<div class="mbk" data-act="close"></div><div class="mbox${o.wide?' wide':''}" role="dialog" aria-modal="true">${fn()}</div>`;
+    bx=m.querySelector('.mbox');
+    if(!MOBILE.matches&&lastPtr){bx.style.transform='none';const r=bx.getBoundingClientRect();
+      const ox=Math.max(0,Math.min(r.width,lastPtr.x-r.left)),oy=Math.max(0,Math.min(r.height,lastPtr.y-r.top));bx.style.transformOrigin=`${ox}px ${oy}px`}
+    applySheet(0);
+  }else{bx.className='mbox'+(o.wide?' wide':'');bx.innerHTML=fn();bx.scrollTop=0}
+  animateSheet(1);
+  const first=m.querySelector('.mbody input:not([type=hidden]):not([readonly]),.mbody select,.mbody textarea');
+  if(first&&!MOBILE.matches)first.focus({preventScroll:true});else m.querySelector('.mh .ib')?.focus({preventScroll:true});
+}
+function refreshModal(){if(MOD&&MOD.live){const b=$('#modal .mbox');if(b){const st=b.scrollTop;b.innerHTML=MOD.fn();b.scrollTop=st}}}
+function closeModal(){
+  MOD=null;S.ui.hist=null;const m=$('#modal');if(m.hidden)return;
+  m.style.pointerEvents='none';const v=SH.closeV;SH.closeV=0;
+  animateSheet(0,v,1,()=>{if(!MOD){m.hidden=true;m.innerHTML='';m.style.pointerEvents='';SH.p=0}});
+}
+/* arrastar a folha para baixo para fechar (celular) */
+document.addEventListener('pointerdown',e=>{
+  const head=e.target.closest('#modal .mh');
+  if(!head||!MOBILE.matches||RM.matches||e.target.closest('button,a,input,select,textarea'))return;
+  const bx=$('#modal .mbox');if(!bx||!MOD)return;
+  if(SH.anim){SH.anim.stop();SH.anim=null}
+  const h=bx.offsetHeight,y0=e.clientY,off=(1-SH.p)*h,hist=[{y:e.clientY,t:performance.now()}];
+  try{head.setPointerCapture(e.pointerId)}catch(_){}
+  const move=ev=>{let dy=off+ev.clientY-y0;if(dy<0)dy=-rubber(-dy,h);SH.p=1-dy/h;applySheet(SH.p);hist.push({y:ev.clientY,t:performance.now()});if(hist.length>6)hist.shift()};
+  const up=()=>{head.removeEventListener('pointermove',move);head.removeEventListener('pointerup',up);head.removeEventListener('pointercancel',up);
+    const a=hist[0],b=hist[hist.length-1],dt=(b.t-a.t)/1000,v=dt>0?(b.y-a.y)/dt:0,dy=(1-SH.p)*h;
+    if(dy+projectPx(v)>h*.45&&MOD){SH.closeV=-v/h;closeModal()}else animateSheet(1,-v/h,.85)};
+  head.addEventListener('pointermove',move);head.addEventListener('pointerup',up);head.addEventListener('pointercancel',up);
+});
+const mh=(t,sub,big)=>`<div class="mh"><div class="grab" aria-hidden="true"></div><div>${big?`<div class="lknum">${t}</div>`:`<h2>${t}</h2>`}${sub?`<div class="sub">${sub}</div>`:''}</div><button class="ib" data-act="close" aria-label="Fechar">${ic('x')}</button></div>`;
+const formModal=(name,title,sub,body,submit,extra='')=>`<form data-form="${name}" novalidate>${mh(title,sub)}<div class="mbody">${body}<div class="err" id="ferr" role="alert"></div></div><div class="mfoot">${extra}<button type="button" class="btn" data-act="close">Cancelar</button><button class="btn pri" type="submit">${submit}</button></div></form>`;
+
+/* seleção de colaborador por lista pesquisável */
+const colLabel=c=>`${c.matricula} - ${c.nome}`;
+function colPicker(name,list,sel,label='Colaborador'){
+  const cur=sel&&S.col[sel]?colLabel(S.col[sel]):'';
+  return `<label class="field full"><span>${label}</span><input class="inp" name="${name}" list="dl-${name}" value="${esc(cur)}" placeholder="Digite nome ou matrícula" autocomplete="off" required><datalist id="dl-${name}">${list.map(c=>`<option value="${esc(colLabel(c))}">`).join('')}</datalist></label>`;
+}
+function resolveCol(v){
+  v=String(v||'').trim();if(!v)return null;
+  const mat=v.split(' - ')[0].trim();
+  return cols().find(c=>String(c.matricula)===mat)||cols().find(c=>norm(c.nome)===norm(v))||null;
+}
+const freeFor=cId=>arms().filter(a=>a.status==='disponivel'||(a.status==='reservado'&&cId&&a.reservaPara===cId));
+const lockerSelect=(name,list,sel,label='Armário')=>`<label class="field"><span>${label}</span><select class="inp" name="${name}" required>${list.length?opts(list.map(a=>[a.numero,lname(a.numero)+(a.status==='reservado'?' (reservado)':'')]),sel,'Selecione'):'<option value="">Nenhum armário disponível</option>'}</select></label>`;
+const keySelect=(name,sel,label='Situação da chave')=>`<label class="field"><span>${label}</span><select class="inp" name="${name}">${opts(CHAVES,sel)}</select></label>`;
+
+/* armário: detalhes */
+function mdArm(n){S.ui.hist=null;openModal(()=>armHtml(n),{live:true})}
+function armHtml(n){
+  const a=armOf(n);if(!a)return mh(lname(n),'',true)+'<div class="mbody"><p>Armário não encontrado.</p></div>';
+  const c=a.colabId?S.col[a.colabId]:null,rc=a.reservaPara?S.col[a.reservaPara]:null;
+  let info='';
+  if(a.status==='ocupado')info=`<dl class="dl"><dt>Colaborador</dt><dd>${c?`<a href="#" data-act="colab" data-id="${esc(c.id)}">${esc(c.nome)}</a>`:'—'}${c&&c.situacao!=='Ativo'?' '+sitB(c.situacao):''}</dd><dt>Matrícula</dt><dd>${esc(c?.matricula||'—')}</dd><dt>Cargo</dt><dd>${esc(c?.cargo||'—')}</dd><dt>Setor</dt><dd>${esc(c?.setor||'—')}</dd><dt>Turno</dt><dd>${esc(c?.turno||'—')}</dd><dt>Data de ocupação</dt><dd>${fD(a.dataOcupacao)}</dd></dl>`;
+  else if(a.status==='reservado')info=`<dl class="dl"><dt>Reservado para</dt><dd>${rc?esc(rc.nome)+' ('+esc(rc.matricula)+')':'Sem colaborador definido'}</dd><dt>Motivo</dt><dd>${esc(a.reservaObs||'—')}</dd></dl>`;
+  else if(a.status==='manutencao')info=`<dl class="dl"><dt>Motivo</dt><dd>${esc(a.manutObs||'—')}</dd></dl>`;
+  const desl=c&&c.situacao==='Desligado'?`<div class="alert-h" role="alert">⚠️ COLABORADOR DESLIGADO COM ARMÁRIO VINCULADO</div>`:'';
+  const btn=(act,l,cls='')=>`<button class="btn ${cls}" data-act="${act}" data-n="${n}">${l}</button>`;
+  let acts=btn('edit-arm','Editar');
+  if(a.status==='ocupado')acts+=btn('trocar-colab','Trocar colaborador')+btn('devolver-manut','Colocar em manutenção')+btn('devolver','Registrar devolução','pri');
+  else if(a.status==='disponivel')acts+=btn('inativar','Inativar','warn')+btn('reservar','Reservar')+btn('manut','Colocar em manutenção')+btn('vincular','Vincular colaborador','pri');
+  else if(a.status==='reservado')acts+=btn('cancelar-reserva','Cancelar reserva')+btn('manut','Colocar em manutenção')+btn('vincular','Vincular colaborador','pri');
+  else if(a.status==='manutencao')acts+=btn('concluir-manut','Concluir manutenção','pri');
+  else if(a.status==='inativo')acts+=btn('reativar','Reativar','pri');
+  const h=S.ui.hist&&S.ui.hist.key==='a'+n?S.ui.hist:null;
+  return `${mh(lname(n),`${bdg(a.status)} &nbsp;${esc(a.localizacao||'')}`,true)}<div class="mbody">${desl}${info}
+   ${a.notif?`<div class="alert-h" style="background:var(--res-soft);color:var(--res)">Notificação de 48 h afixada. Prazo: ${fTs(a.notif.prazo)} ${fHr(a.notif.prazo)}${new Date(a.notif.prazo)<new Date()?' (vencido)':''}</div>`:''}
+   <div class="box"><h3>Documentos</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${a.status==='ocupado'?`<button class="btn sm" data-act="doc-termo" data-n="${n}">Termo de responsabilidade</button>`:''}${a.status!=='inativo'?`<button class="btn sm" data-act="doc-notif" data-n="${n}">Notificação de 48 h</button>`:''}${a.notif?`<button class="btn sm" data-act="notif-fim" data-n="${n}">Usuário compareceu</button>`:''}<button class="btn sm" data-act="doc-abert" data-n="${n}">Termo de abertura</button></div></div>
+   <div class="box"><h3>Chave</h3><dl class="dl"><dt>Situação</dt><dd>${keyB(a.chaveSit)}</dd><dt>Número da chave</dt><dd>${esc(a.chaveNum||'—')}</dd></dl></div>
+   ${a.obs?`<div class="box"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:''}
+   <div class="box"><h3 style="display:flex;align-items:center">Histórico<button class="btn sm" style="margin-left:auto" data-act="hist-arm" data-n="${n}">${h?'Ocultar':'Ver histórico'}</button></h3>
+   ${h?(h.rows?(h.rows.length?`<div class="histmini">${tbl(['Data','Hora','Tipo','Colaborador','Responsável','Observação'],h.rows.map(m=>`<tr><td>${fTs(m.ts)}</td><td>${fHr(m.ts)}</td><td>${tipoB(m.tipo)}</td><td>${esc(m.nome||'—')}</td><td>${esc(nm(m.resp))}</td><td class="obs">${esc(m.obs||'')}</td></tr>`))}</div>`:'<p class="small muted">Sem movimentações.</p>'):'<p class="small muted">Carregando…</p>'):'<p class="small muted" style="margin:0">Todas as movimentações deste armário ficam registradas.</p>'}</div>
+  </div><div class="mfoot">${acts}</div>`;
+}
+async function loadHist(key,field,val){
+  S.ui.hist={key,rows:null};refreshModal();
+  const rows=await queryMovs(field,val);
+  if(S.ui.hist&&S.ui.hist.key===key){S.ui.hist.rows=rows;ensureNames(rows.map(m=>m.resp));refreshModal()}
+}
+
+/* colaborador: ficha */
+function mdCol(id){openModal(()=>colHtml(id),{live:true,wide:true});loadHist('c'+id,'colabId',id)}
+function colHtml(id){
+  const c=S.col[id];if(!c)return mh('Colaborador')+'<div class="mbody"><p>Colaborador não encontrado.</p></div>';
+  const A=(c.armarios||[]).map(armOf).filter(Boolean);
+  const desl=c.situacao==='Desligado'&&A.length?`<div class="alert-h" role="alert">⚠️ COLABORADOR DESLIGADO COM ARMÁRIO VINCULADO</div>`:'';
+  const cards=A.length?A.map(a=>`<div class="lkcard"><div class="big">${pad(a.numero)}</div><dl class="dl" style="flex:1;min-width:220px"><dt>Data de ocupação</dt><dd>${fD(a.dataOcupacao)}</dd><dt>Situação da chave</dt><dd>${keyB(a.chaveSit)}</dd></dl>
+     <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm" data-act="armario" data-n="${a.numero}">Abrir armário</button><button class="btn sm" data-act="trocar-armario" data-id="${esc(id)}" data-n="${a.numero}">Trocar armário</button><button class="btn sm pri" data-act="devolver" data-n="${a.numero}">Registrar devolução</button></div></div>`).join('<hr style="border:0;border-top:1px solid var(--line);margin:12px 0">')
+    :`<p style="margin:0" class="muted">Sem armário vinculado</p>${c.situacao!=='Desligado'?`<button class="btn sm pri" style="margin-top:10px" data-act="vincular" data-id="${esc(id)}">Vincular armário</button>`:''}`;
+  const h=S.ui.hist&&S.ui.hist.key==='c'+id?S.ui.hist:null;
+  return `${mh(esc(c.nome),`Matrícula ${esc(c.matricula)} &nbsp;${sitB(c.situacao)}`)}<div class="mbody">${desl}
+   <dl class="dl"><dt>Cargo</dt><dd>${esc(c.cargo||'—')}</dd><dt>Setor</dt><dd>${esc(c.setor||'—')}</dd><dt>Turno</dt><dd>${esc(c.turno||'—')}</dd><dt>Admissão</dt><dd>${fD(c.admissao)}</dd></dl>
+   <div class="box"><h3>Armário atual</h3>${cards}</div>
+   <div class="box"><h3>Histórico de movimentações</h3>${!h||!h.rows?'<p class="small muted">Carregando…</p>':h.rows.length?`<div class="histmini">${tbl(['Data','Hora','Tipo','Armário','Responsável','Observação'],h.rows.map(m=>`<tr><td>${fTs(m.ts)}</td><td>${fHr(m.ts)}</td><td>${tipoB(m.tipo)}</td><td class="num">${m.armario?pad(m.armario):'—'}</td><td>${esc(nm(m.resp))}</td><td class="obs">${esc(m.obs||'')}</td></tr>`))}</div>`:'<p class="small muted">Sem movimentações.</p>'}</div>
+  </div><div class="mfoot"><button class="btn" data-act="edit-colab" data-id="${esc(id)}">Editar cadastro</button>${A.length&&isAdmin()&&c.situacao!=='Desligado'?`<button class="btn" data-act="vincular" data-id="${esc(id)}">Vincular outro armário</button>`:''}</div>`;
+}
+
+/* formulários */
+function fColab(id){
+  const c=id?S.col[id]:null,cf=CFG();
+  const setores=[...new Set([...cf.setores,...(c&&c.setor?[c.setor]:[])])],turnos=[...new Set([...cf.turnos,...(c&&c.turno?[c.turno]:[])])];
+  openModal(()=>formModal('colab',c?'Editar colaborador':'Novo colaborador',c?'A matrícula não pode ser alterada depois do cadastro.':'',`<input type="hidden" name="id" value="${esc(id||'')}"><div class="fgrid">
+   <label class="field"><span>Matrícula</span><input class="inp" name="matricula" value="${esc(c?.matricula||'')}" ${c?'readonly':''} required></label>
+   <label class="field"><span>Situação</span><select class="inp" name="situacao">${opts(SITS,c?.situacao||'Ativo')}</select></label>
+   <label class="field full"><span>Nome completo</span><input class="inp" name="nome" value="${esc(c?.nome||'')}" required></label>
+   <label class="field"><span>Cargo</span><input class="inp" name="cargo" value="${esc(c?.cargo||'')}"></label>
+   <label class="field"><span>Setor</span><select class="inp" name="setor">${opts(setores,c?.setor,'Selecione')}</select></label>
+   <label class="field"><span>Turno</span><select class="inp" name="turno">${opts(turnos,c?.turno,'Selecione')}</select></label>
+   <label class="field"><span>Data de admissão</span><input class="inp" type="date" name="admissao" value="${esc(c?.admissao||'')}"></label></div>`,c?'Salvar alterações':'Cadastrar colaborador'));
+}
+function fArm(n){
+  const a=n?armOf(n):null,next=Math.max(0,...arms().map(x=>x.numero))+1;
+  openModal(()=>formModal('arm',a?'Editar '+lname(n):'Cadastrar armário',a?'Mudanças no número ou na situação da chave ficam registradas no histórico.':'',`<input type="hidden" name="orig" value="${n||''}"><div class="fgrid">
+   <label class="field"><span>Número do armário</span><input class="inp" type="number" min="1" name="numero" value="${a?a.numero:next}" ${a?'readonly':''} required></label>
+   <label class="field"><span>Status</span><input class="inp" value="${a?ST[a.status].l:'Disponível'}" readonly></label>
+   <label class="field full"><span>Localização</span><input class="inp" name="localizacao" value="${esc(a?a.localizacao:CFG().localPadrao)}"></label>
+   <label class="field"><span>Número da chave</span><input class="inp" name="chaveNum" value="${esc(a?a.chaveNum:pad(next))}"></label>
+   ${keySelect('chaveSit',a?a.chaveSit:'Não entregue')}
+   <label class="field full"><span>Observações</span><textarea class="inp" name="obs" rows="3">${esc(a?.obs||'')}</textarea></label>
+   ${a?'<p class="hint full">O status muda pelas ações do armário: vincular, devolver, reservar, manutenção.</p>':''}</div>`,a?'Salvar alterações':'Cadastrar armário'));
+}
+function fVincular(n,cId){
+  const elig=cols().filter(c=>c.situacao!=='Desligado'&&(isAdmin()||!(c.armarios||[]).length));
+  openModal(()=>formModal('vincular','Vincular armário','Selecione o colaborador e um armário disponível.',`<div class="fgrid">
+   ${colPicker('colab',elig,cId)}
+   ${lockerSelect('numero',freeFor(cId).concat(n&&armOf(n)&&armOf(n).status==='reservado'&&!freeFor(cId).some(a=>a.numero===n)?[armOf(n)]:[]),n)}
+   <label class="field"><span>Data da entrega</span><input class="inp" type="date" name="data" value="${today()}" required></label>
+   ${keySelect('chave','Entregue')}
+   <label class="field full"><span>Observação</span><textarea class="inp" name="obs" rows="2"></textarea></label>
+   ${isAdmin()?`<label class="check full"><input type="checkbox" name="multi"><span>Autorizo, como Administrador RH, um segundo armário para este colaborador, se ele já tiver um.</span></label>`:''}</div>`,'Confirmar vinculação'));
+}
+function fDevolver(n,destino){
+  const a=armOf(n);if(!a||a.status!=='ocupado'){toast('Este armário não está ocupado.','err');return}
+  const c=S.col[a.colabId];
+  openModal(()=>formModal('devolver','Registrar devolução',`${lname(n)}, ${esc(c?.nome||'colaborador')} (${esc(c?.matricula||'')})`,`<input type="hidden" name="numero" value="${n}"><div class="fgrid">
+   <label class="field"><span>Data da devolução</span><input class="inp" type="date" name="data" value="${today()}" required></label>
+   ${keySelect('chave','Devolvida')}
+   <label class="field full"><span>Responsável pelo recebimento</span><input class="inp" name="receb" value="${esc(S.me.name||'')}" required></label>
+   <label class="field full"><span>Após a devolução, o armário fica</span><select class="inp" name="destino">${opts([['disponivel','Disponível'],['manutencao','Em manutenção (limpeza ou reparo)']],destino||'disponivel')}</select></label>
+   <label class="field full"><span>Observação</span><textarea class="inp" name="obs" rows="2"></textarea></label></div>`,'Confirmar devolução'));
+}
+function fTrocaArm(cId,n){
+  const c=S.col[cId];if(!c)return;
+  const atuais=(c.armarios||[]);if(!atuais.length){toast('Este colaborador não possui armário.','err');return}
+  openModal(()=>formModal('trocaArm','Trocar armário',`${esc(c.nome)} (${esc(c.matricula)})`,`<input type="hidden" name="colab" value="${esc(cId)}"><div class="fgrid">
+   <label class="field"><span>Armário atual</span><select class="inp" name="antigo">${opts(atuais.map(x=>[x,lname(x)]),n||atuais[0])}</select></label>
+   ${lockerSelect('novo',freeFor(cId),'','Novo armário')}
+   ${keySelect('chaveAntiga','Devolvida','Chave do armário antigo')}
+   ${keySelect('chaveNova','Entregue','Chave do novo armário')}
+   <label class="field"><span>Data da troca</span><input class="inp" type="date" name="data" value="${today()}" required></label>
+   <label class="field full"><span>Motivo da troca</span><textarea class="inp" name="motivo" rows="2" required></textarea></label></div>`,'Confirmar troca'));
+}
+function fTrocaCol(n){
+  const a=armOf(n);if(!a||a.status!=='ocupado')return;const c0=S.col[a.colabId];
+  const elig=cols().filter(c=>c.id!==a.colabId&&c.situacao!=='Desligado'&&(isAdmin()||!(c.armarios||[]).length));
+  openModal(()=>formModal('trocaCol','Trocar colaborador do '+lname(n),`Ocupante atual: ${esc(c0?.nome||'—')}. O ocupante atual será desvinculado e o novo assume o armário.`,`<input type="hidden" name="numero" value="${n}"><div class="fgrid">
+   ${colPicker('colab',elig,null,'Novo ocupante')}
+   <label class="field"><span>Data</span><input class="inp" type="date" name="data" value="${today()}" required></label>
+   ${keySelect('chave','Entregue','Situação da chave com o novo ocupante')}
+   <label class="field full"><span>Motivo da troca</span><textarea class="inp" name="motivo" rows="2" required></textarea></label>
+   ${isAdmin()?`<label class="check full"><input type="checkbox" name="multi"><span>Autorizo um segundo armário se o novo ocupante já tiver um.</span></label>`:''}</div>`,'Confirmar troca'));
+}
+function fReservar(n){
+  const elig=cols().filter(c=>c.situacao!=='Desligado');
+  openModal(()=>formModal('reservar','Reservar '+lname(n),'Deixe o colaborador em branco para uma reserva sem nome definido.',`<input type="hidden" name="numero" value="${n}"><div class="fgrid">
+   ${colPicker('colab',elig,null,'Reservar para (opcional)').replace(' required','')}
+   <label class="field full"><span>Motivo ou observação</span><textarea class="inp" name="obs" rows="2" placeholder="Ex.: novo colaborador com início previsto"></textarea></label></div>`,'Confirmar reserva'));
+}
+function fManut(n){
+  openModal(()=>formModal('manut','Colocar '+lname(n)+' em manutenção','Armários em manutenção não podem ser atribuídos.',`<input type="hidden" name="numero" value="${n}"><label class="field"><span>Motivo</span><textarea class="inp" name="obs" rows="3" required placeholder="Ex.: fechadura com defeito, limpeza"></textarea></label>`,'Confirmar'));
+}
+function fPend(){
+  openModal(()=>formModal('pend','Registrar pendência','',`<div class="fgrid"><label class="field full"><span>Descrição</span><textarea class="inp" name="texto" rows="3" required></textarea></label>
+  <label class="field"><span>Armário (opcional)</span><input class="inp" type="number" min="1" name="armario"></label></div>`,'Registrar'));
+}
+function fPick(kind){
+  const list=cols().filter(c=>(c.armarios||[]).length);
+  if(!list.length){toast('Nenhum colaborador com armário vinculado.','err');return}
+  openModal(()=>formModal('pick',kind==='dev'?'Registrar devolução':'Trocar armário','Selecione o colaborador.',`<input type="hidden" name="kind" value="${kind}"><div class="fgrid">${colPicker('colab',list,null)}</div>`,'Continuar'));
+}
+function fImport(){
+  S.ui.imp=null;
+  openModal(()=>`<form data-form="import" novalidate>${mh('Importar colaboradores','Planilha .xlsx ou .csv com cabeçalho na primeira linha.')}<div class="mbody">
+   <p class="small" style="margin-top:0">Colunas: <b>Matrícula, Nome, Cargo, Setor, Turno, Admissão, Situação</b>. Matrículas já cadastradas são atualizadas, mantendo o armário vinculado.</p>
+   <div class="toolbar"><input class="inp grow" type="file" name="arq" accept=".xlsx,.xls,.csv" data-chg="impfile" aria-label="Arquivo"><button type="button" class="btn sm" data-act="tpl">${ic('down')}Baixar modelo</button></div>
+   <div id="impprev">${impPreview()}</div><div class="err" id="ferr" role="alert"></div></div>
+   <div class="mfoot"><button type="button" class="btn" data-act="close">Cancelar</button><button class="btn pri" type="submit">Importar</button></div></form>`,{wide:true});
+}
+function impPreview(){
+  const p=S.ui.imp;if(!p)return '';
+  if(p.loading)return '<p class="small muted">Lendo arquivo…</p>';
+  const ok=p.rows.filter(r=>!r.erro),bad=p.rows.filter(r=>r.erro),upd=ok.filter(r=>S.col[cid(r.matricula)]).length;
+  return `<p><b>${ok.length}</b> válido(s): ${ok.length-upd} novo(s), ${upd} atualização(ões).${bad.length?` <span style="color:var(--bad)">${bad.length} linha(s) ignorada(s).</span>`:''}</p>`+
+   tbl(['Linha','Matrícula','Nome','Setor','Turno','Situação','Status'],p.rows.slice(0,60).map(r=>`<tr><td>${r.linha}</td><td>${esc(r.matricula)}</td><td>${esc(r.nome)}</td><td>${esc(r.setor)}</td><td>${esc(r.turno)}</td><td>${esc(r.situacao)}</td><td>${r.erro?`<span style="color:var(--bad)">${esc(r.erro)}</span>`:S.col[cid(r.matricula)]?'Atualizar':'Novo'}</td></tr>`));
+}
+
+/* ---------- regras de negócio ---------- */
+async function doVincular(cId,n,data,chave,obs,multi){
+  const c=S.col[cId];if(!c)fail('Selecione um colaborador da lista.');
+  if(c.situacao==='Desligado')fail('Colaborador desligado não pode receber armário.');
+  if((c.armarios||[]).length&&!(multi&&isAdmin()))fail(isAdmin()?`${c.nome} já possui o ${lname(c.armarios[0])}. Para vincular um segundo, marque a autorização do Administrador.`:`${c.nome} já possui o ${lname(c.armarios[0])}. Somente o Administrador RH pode autorizar um segundo armário.`);
+  const a=await guard(n,a=>{
+    if(!a)fail('Armário não encontrado.');
+    if(a.status==='ocupado')fail(`O ${lname(n)} já está ocupado.`);
+    if(a.status==='manutencao')fail(`O ${lname(n)} está em manutenção e não pode ser atribuído.`);
+    if(a.status==='inativo')fail(`O ${lname(n)} está inativo.`);
+    if(a.status==='reservado'&&a.reservaPara&&a.reservaPara!==cId)fail(`O ${lname(n)} está reservado para outro colaborador. Cancele a reserva antes.`);
+    return a;});
+  const ts=new Date().toISOString(),second=(c.armarios||[]).length>0;
+  await put('armarios',aid(n),{...a,status:'ocupado',colabId:cId,dataOcupacao:data,chaveSit:chave,reservaPara:null,reservaObs:null,notif:null,ultimaMov:ts});
+  await put('colaboradores',cId,{...c,armarios:[...(c.armarios||[]),n]});
+  await addMov({tipo:'Ocupação',armario:n,colabId:cId,nome:c.nome,matricula:c.matricula,obs:[`Entrega em ${fD(data)}, chave: ${chave}`,obs,second?'Segundo armário autorizado pelo Administrador RH':''].filter(Boolean).join('. ')});
+}
+async function doDevolver(n,data,chave,receb,obs,destino){
+  const a=await guard(n,a=>{if(!a||a.status!=='ocupado')fail('Este armário não está ocupado.');return a});
+  const c=S.col[a.colabId],ts=new Date().toISOString();
+  await put('armarios',aid(n),{...a,status:destino,colabId:null,dataOcupacao:null,chaveSit:chave,notif:null,ultimaMov:ts,manutObs:destino==='manutencao'?'Limpeza ou reparo após devolução':null});
+  if(c)await put('colaboradores',c.id,{...c,armarios:(c.armarios||[]).filter(x=>x!==n)});
+  await addMov({tipo:'Devolução',armario:n,colabId:a.colabId,nome:c?.nome||'',matricula:c?.matricula||'',recebidoPor:receb,obs:[`Devolução em ${fD(data)}, chave: ${chave}`,'Recebido por: '+receb,obs].filter(Boolean).join('. ')});
+  if(destino==='manutencao')await addMov({tipo:'Manutenção',armario:n,obs:'Encaminhado para manutenção após devolução'});
+}
+async function doTrocaArm(cId,old,nw,chA,chN,data,motivo){
+  const c=S.col[cId];if(!c)fail('Colaborador não encontrado.');
+  if(old===nw)fail('Escolha um armário diferente do atual.');
+  const a0=await guard(old,a=>{if(!a||a.status!=='ocupado'||a.colabId!==cId)fail(`O ${lname(old)} não está vinculado a este colaborador.`);return a});
+  const a1=await guard(nw,a=>{if(!a)fail('Novo armário não encontrado.');if(!(a.status==='disponivel'||(a.status==='reservado'&&a.reservaPara===cId)))fail(`O ${lname(nw)} não está disponível.`);return a});
+  const ts=new Date().toISOString();
+  await put('armarios',aid(old),{...a0,status:'disponivel',colabId:null,dataOcupacao:null,chaveSit:chA,notif:null,ultimaMov:ts});
+  await put('armarios',aid(nw),{...a1,status:'ocupado',colabId:cId,dataOcupacao:data,chaveSit:chN,reservaPara:null,reservaObs:null,notif:null,ultimaMov:ts});
+  await put('colaboradores',cId,{...c,armarios:(c.armarios||[]).map(x=>x===old?nw:x)});
+  await addMov({tipo:'Troca',armario:old,colabId:cId,nome:c.nome,matricula:c.matricula,obs:`Saída: transferido para o ${lname(nw)}. Chave antiga: ${chA}. Motivo: ${motivo}`});
+  await addMov({tipo:'Troca',armario:nw,colabId:cId,nome:c.nome,matricula:c.matricula,obs:`Entrada: vindo do ${lname(old)} em ${fD(data)}. Chave: ${chN}. Motivo: ${motivo}`});
+}
+async function doTrocaCol(n,c1Id,data,chave,motivo,multi){
+  const c1=S.col[c1Id];if(!c1)fail('Selecione o novo ocupante da lista.');
+  if(c1.situacao==='Desligado')fail('Colaborador desligado não pode receber armário.');
+  if((c1.armarios||[]).length&&!(multi&&isAdmin()))fail(`${c1.nome} já possui o ${lname(c1.armarios[0])}.`+(isAdmin()?' Marque a autorização para um segundo armário.':' Somente o Administrador RH pode autorizar um segundo.'));
+  const a=await guard(n,a=>{if(!a||a.status!=='ocupado')fail('Este armário não está ocupado.');if(a.colabId===c1Id)fail('Este colaborador já é o ocupante.');return a});
+  const c0=S.col[a.colabId],ts=new Date().toISOString();
+  await put('armarios',aid(n),{...a,colabId:c1Id,dataOcupacao:data,chaveSit:chave,notif:null,ultimaMov:ts});
+  if(c0)await put('colaboradores',c0.id,{...c0,armarios:(c0.armarios||[]).filter(x=>x!==n)});
+  await put('colaboradores',c1Id,{...c1,armarios:[...(c1.armarios||[]),n]});
+  await addMov({tipo:'Troca',armario:n,colabId:a.colabId,nome:c0?.nome||'',matricula:c0?.matricula||'',obs:`Saída do ocupante; armário passou para ${c1.nome}. Motivo: ${motivo}`});
+  await addMov({tipo:'Troca',armario:n,colabId:c1Id,nome:c1.nome,matricula:c1.matricula,obs:`Novo ocupante em ${fD(data)}, chave: ${chave}. Motivo: ${motivo}`});
+}
+async function setStatus(n,from,to,tipo,obs,extra={}){
+  const a=await guard(n,a=>{if(!a)fail('Armário não encontrado.');if(!from.includes(a.status))fail(`Ação indisponível: o ${lname(n)} está ${ST[a.status].l.toLowerCase()}.`);return a});
+  const ts=new Date().toISOString();
+  await put('armarios',aid(n),{...a,status:to,ultimaMov:ts,...extra});
+  const rc=extra.reservaPara?S.col[extra.reservaPara]:null;
+  await addMov({tipo,armario:n,colabId:rc?rc.id:null,nome:rc?.nome||'',matricula:rc?.matricula||'',obs});
+}
+async function saveColab(v){
+  const id=v.id||cid(v.matricula),old=S.col[id];
+  if(!String(v.matricula||'').trim())fail('Informe a matrícula.');
+  if(!String(v.nome||'').trim())fail('Informe o nome completo.');
+  if(!v.id&&old)fail(`A matrícula ${v.matricula} já está cadastrada para ${old.nome}.`);
+  const doc={...(old||{}),id,matricula:String(old?old.matricula:v.matricula).trim(),nome:v.nome.trim(),cargo:(v.cargo||'').trim(),setor:v.setor||'',turno:v.turno||'',admissao:v.admissao||'',situacao:v.situacao||'Ativo',armarios:old?.armarios||[],atualizadoEm:new Date().toISOString()};
+  if(!old)doc.criadoEm=doc.atualizadoEm;
+  await put('colaboradores',id,doc);
+  return {id,virouDesligado:doc.situacao==='Desligado'&&old?.situacao!=='Desligado'&&doc.armarios.length};
+}
+async function saveArm(v){
+  const n=+v.numero;if(!n||n<1)fail('Informe um número de armário válido.');
+  if(v.orig){
+    const a=await guard(n,a=>{if(!a)fail('Armário não encontrado.');return a});
+    const ts=new Date().toISOString(),keyChanged=a.chaveNum!==v.chaveNum||a.chaveSit!==v.chaveSit;
+    await put('armarios',aid(n),{...a,localizacao:v.localizacao,chaveNum:v.chaveNum,chaveSit:v.chaveSit,obs:v.obs,...(keyChanged?{ultimaMov:ts}:{})});
+    if(keyChanged){const c=a.colabId?S.col[a.colabId]:null;await addMov({tipo:'Alteração de chave',armario:n,colabId:a.colabId||null,nome:c?.nome||'',matricula:c?.matricula||'',obs:`Chave ${a.chaveNum||'—'} (${a.chaveSit||'—'}) para ${v.chaveNum||'—'} (${v.chaveSit})`})}
+  }else{
+    if(!isAdmin())fail('Somente o Administrador RH cadastra armários.');
+    if(armOf(n))fail(`O ${lname(n)} já existe.`);
+    await put('armarios',aid(n),{numero:n,status:'disponivel',localizacao:v.localizacao,chaveNum:v.chaveNum,chaveSit:v.chaveSit,obs:v.obs,colabId:null,criadoEm:new Date().toISOString()});
+    const c=CFG();if(n>c.qtd)await put('config','main',{...c,qtd:n});
+  }
+}
+async function inBatches(items,fn,size=8){for(let i=0;i<items.length;i+=size)await Promise.all(items.slice(i,i+size).map(fn))}
+async function saveCfg(v){
+  if(!isAdmin())fail('Somente o Administrador RH altera as configurações.');
+  const qtd=Math.max(0,Math.min(2000,parseInt(v.qtd,10)||0)),colunas=Math.max(1,Math.min(40,parseInt(v.colunas,10)||10));
+  const lines=s=>[...new Set(String(s||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean))];
+  const blocked=arms().filter(a=>a.numero>qtd&&['ocupado','reservado'].includes(a.status));
+  if(blocked.length)fail(`Não é possível reduzir para ${qtd}: ${blocked.map(a=>lname(a.numero)).join(', ')} está(ão) ocupado(s) ou reservado(s). Registre a devolução ou cancele a reserva antes.`);
+  await put('config','main',{qtd,colunas,localPadrao:(v.localPadrao||'').trim()||DEF_CFG.localPadrao,setores:lines(v.setores),turnos:lines(v.turnos),razao:(v.razao||'').trim(),cnpj:(v.cnpj||'').trim(),prazoGuarda:Math.max(1,Math.min(180,parseInt(v.prazoGuarda,10)||30)),atendimento:(v.atendimento||'').trim()||DEF_CFG.atendimento});
+  const create=[],react=[],inact=[];
+  for(let n=1;n<=qtd;n++){const a=armOf(n);if(!a)create.push(n);else if(a.status==='inativo'&&a.autoInativo)react.push(a)}
+  for(const a of arms())if(a.numero>qtd&&a.status!=='inativo')inact.push(a);
+  const loc=(v.localPadrao||'').trim()||DEF_CFG.localPadrao,ts=new Date().toISOString();
+  if(create.length>20)toast(`Criando ${create.length} armários…`);
+  await inBatches(create,n=>put('armarios',aid(n),{numero:n,status:'disponivel',localizacao:loc,chaveNum:pad(n),chaveSit:'Não entregue',obs:'',colabId:null,criadoEm:ts}));
+  await inBatches(react,async a=>{await put('armarios',aid(a.numero),{...a,status:'disponivel',autoInativo:false,ultimaMov:ts});await addMov({tipo:'Reativação',armario:a.numero,obs:'Voltou à quantidade configurada'})});
+  await inBatches(inact,async a=>{await put('armarios',aid(a.numero),{...a,status:'inativo',autoInativo:true,ultimaMov:ts});await addMov({tipo:'Inativação',armario:a.numero,obs:'Fora da quantidade configurada'})});
+}
+
+/* importação */
+function parseCSV(text){
+  const first=text.split(/\r?\n/)[0]||'';const d=[';','\t',','].sort((a,b)=>first.split(b).length-first.split(a).length)[0];
+  const rows=[];let row=[],cell='',q=false;
+  for(let i=0;i<text.length;i++){const ch=text[i];
+    if(q){if(ch==='"'){if(text[i+1]==='"'){cell+='"';i++}else q=false}else cell+=ch}
+    else if(ch==='"')q=true;else if(ch===d){row.push(cell);cell=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(cell);rows.push(row);row=[];cell=''}else cell+=ch}
+  if(cell||row.length){row.push(cell);rows.push(row)}
+  return rows.filter(r=>r.some(c=>String(c).trim()));
+}
+function toISO(v){
+  if(v==null||v==='')return '';
+  if(v instanceof Date&&!isNaN(v))return isoLocal(v);
+  if(typeof v==='number'){const d=new Date(Math.round((v-25569)*864e5));return isNaN(d)?'':d.toISOString().slice(0,10)}
+  const s=String(v).trim();let m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if(m){const y=m[3].length===2?'20'+m[3]:m[3];return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}
+  m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);return m?m[0]:'';
+}
+async function readImport(file){
+  let grid;
+  if(/\.csv$/i.test(file.name)){grid=parseCSV(await file.text())}
+  else{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true});grid=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''})}
+  if(!grid.length)fail('A planilha está vazia.');
+  const H=grid[0].map(h=>norm(h));
+  const idx=(...k)=>H.findIndex(h=>k.some(x=>h===x||h.startsWith(x)));
+  const ix={matricula:idx('matricula','mat','re','registro'),nome:idx('nome completo','nome','colaborador'),cargo:idx('cargo','funcao'),setor:idx('setor','area','departamento'),turno:idx('turno'),admissao:idx('data de admissao','admissao'),situacao:idx('situacao','status')};
+  if(ix.matricula<0||ix.nome<0)fail('Não encontrei as colunas Matrícula e Nome na primeira linha.');
+  const seen=new Set();
+  return grid.slice(1).map((r,i)=>{const g=k=>ix[k]>=0?r[ix[k]]:'';
+    let sit=norm(g('situacao'));sit=sit.startsWith('deslig')?'Desligado':sit.startsWith('afast')?'Afastado':'Ativo';
+    const o={linha:i+2,matricula:String(g('matricula')).trim(),nome:String(g('nome')).trim(),cargo:String(g('cargo')).trim(),setor:String(g('setor')).trim(),turno:String(g('turno')).trim(),admissao:toISO(g('admissao')),situacao:sit};
+    if(!o.matricula)o.erro='Sem matrícula';else if(!o.nome)o.erro='Sem nome';else if(seen.has(o.matricula))o.erro='Matrícula repetida';
+    seen.add(o.matricula);return o}).filter(o=>o.matricula||o.nome);
+}
+async function doImport(){
+  const p=S.ui.imp;if(!p||!p.rows)fail('Selecione um arquivo.');
+  const ok=p.rows.filter(r=>!r.erro);if(!ok.length)fail('Nenhuma linha válida para importar.');
+  const ts=new Date().toISOString();let desl=0;
+  await inBatches(ok,async r=>{const id=cid(r.matricula),old=S.col[id];
+    if(old&&r.situacao==='Desligado'&&old.situacao!=='Desligado'&&(old.armarios||[]).length)desl++;
+    await put('colaboradores',id,{...(old||{criadoEm:ts}),id,matricula:r.matricula,nome:r.nome,cargo:r.cargo||old?.cargo||'',setor:r.setor||old?.setor||'',turno:r.turno||old?.turno||'',admissao:r.admissao||old?.admissao||'',situacao:r.situacao,armarios:old?.armarios||[],atualizadoEm:ts})});
+  return {n:ok.length,desl};
+}
+
+/* exportação */
+const loaded={};
+function loadScript(src){if(loaded[src])return loaded[src];return loaded[src]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>{delete loaded[src];rej(new Error('Não foi possível carregar o gerador de arquivos. Verifique a conexão.'))};document.head.appendChild(s)})}
+async function saveFile(filename,data,mime){
+  if(DL){try{await DL.save({filename,data});return true}catch(e){if(e&&(e.code==='cancelled'||e.code==='declined'||e.code==='dismissed'))return false;throw e}}
+  const blob=data instanceof Blob?data:new Blob([data],{type:mime||'application/octet-stream'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return true;
+}
+async function doExport(fmt){
+  const r=report(),title=REL[S.f.rel.t],stamp=today();
+  if(!r.rows.length)fail('Não há dados para exportar com esses filtros.');
+  const base=`armarios-${S.f.rel.t}-${stamp}`;
+  if(fmt==='xlsx'){
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const ws=XLSX.utils.aoa_to_sheet([[`Controle de Armários | RH, Patos de Minas/MG: ${title}`],[`Gerado em ${new Date().toLocaleString('pt-BR')}`],[],r.cols,...r.rows]);
+    ws['!cols']=r.cols.map((c,i)=>({wch:Math.min(48,Math.max(c.length,...r.rows.map(x=>String(x[i]||'').length))+2)}));
+    const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,title.slice(0,31));
+    const out=XLSX.write(wb,{type:'array',bookType:'xlsx'});
+    return saveFile(base+'.xlsx',out,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  }
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js');
+  const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+  doc.setFontSize(14);doc.text('Controle de Armários | RH: '+title,40,40);
+  doc.setFontSize(9);doc.setTextColor(100);doc.text(`Unidade Patos de Minas/MG, armários masculinos. Gerado em ${new Date().toLocaleString('pt-BR')}.`,40,56);
+  doc.autoTable({head:[r.cols],body:r.rows,startY:70,styles:{fontSize:8,cellPadding:4},headStyles:{fillColor:[85,107,47]},alternateRowStyles:{fillColor:[244,246,238]},margin:{left:40,right:40}});
+  return saveFile(base+'.pdf',doc.output('arraybuffer'),'application/pdf');
+}
+
+/* ---------- documentos (PDF) ---------- */
+const JSPDF='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const extenso=d=>`${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+const dtLocalNow=()=>{const d=new Date();d.setSeconds(0,0);return isoLocal(d)+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+/* prazo de 48 horas; se cair no fim de semana, passa para segunda-feira no mesmo horário */
+function prazo48(afix){const p=new Date(afix.getTime()+48*3600e3);const wd=p.getDay();let moved=false;if(wd===6){p.setDate(p.getDate()+2);moved=true}else if(wd===0){p.setDate(p.getDate()+1);moved=true}return{p,moved}}
+const fDTlong=d=>`${d.toLocaleDateString('pt-BR')} (${DIAS[d.getDay()]}), às ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+
+async function newPdf(){await loadScript(JSPDF);const doc=new window.jspdf.jsPDF({unit:'pt',format:'a4'});return{doc,M:54,y:54,W:595.28-108,H:841.89}}
+function need(P,h){if(P.y+h>P.H-58){P.doc.addPage();P.y=P.M}}
+function setF(P,size,style,color){P.doc.setFont('helvetica',style||'normal');P.doc.setFontSize(size);const c=color==null?25:color;Array.isArray(c)?P.doc.setTextColor(...c):P.doc.setTextColor(c)}
+function txt(P,s,o={}){
+  const size=o.size||9.6;setF(P,size,o.bold?'bold':o.italic?'italic':'normal',o.color);
+  const lh=size*(o.lh||1.42),w=(o.width||P.W)-(o.indent||0),lines=P.doc.splitTextToSize(String(s),w);
+  for(const ln of lines){need(P,lh);const x=o.align==='center'?P.M+P.W/2:P.M+(o.indent||0);P.doc.text(ln,x,P.y+size*.95,{align:o.align==='center'?'center':'left'});P.y+=lh}
+  P.y+=(o.after!=null?o.after:6);
+}
+function rule(P,after=10){P.doc.setDrawColor(200);P.doc.setLineWidth(.6);P.doc.line(P.M,P.y,P.M+P.W,P.y);P.y+=after}
+function header(P,title,sub,via){
+  const cf=CFG(),d=P.doc;d.setFillColor(91,110,44);d.rect(0,0,595.28,5,'F');
+  try{d.addImage(FARID_LOGO,'JPEG',P.M,P.y-10,92,30)}catch(e){}
+  const tx=P.M+104;setF(P,8,'normal',110);d.text(`${cf.razao||'[Razão social da empresa]'}${cf.cnpj?'  |  CNPJ '+cf.cnpj:''}`,tx,P.y+1);
+  if(via){setF(P,8,'bold',[91,110,44]);d.text(via,P.M+P.W,P.y+1,{align:'right'})}
+  setF(P,8,'normal',110);d.text('Recursos Humanos, unidade Patos de Minas/MG',tx,P.y+12);P.y+=36;
+  txt(P,title,{size:14.5,bold:true,after:3,color:15});if(sub)txt(P,sub,{size:9,color:105,after:10});rule(P,14);
+}
+function fields(P,rows){
+  const d=P.doc,colW=(P.W-16)/2;
+  for(let i=0;i<rows.length;i+=2){need(P,34);
+    rows.slice(i,i+2).forEach(([l,v],j)=>{const x=P.M+j*(colW+16);setF(P,7.4,'normal',120);d.text(l,x,P.y+8);
+      const val=v==null||v===''?'':String(v);if(val){setF(P,10,'bold',20);d.text(d.splitTextToSize(val,colW)[0],x,P.y+21)}
+      d.setDrawColor(190);d.setLineWidth(.5);d.line(x,P.y+25,x+colW,P.y+25)});
+    P.y+=34}
+  P.y+=4;
+}
+function clause(P,n,title,body){need(P,40);txt(P,`${n}. ${title}`,{bold:true,size:9.8,after:2,color:15});txt(P,body,{after:9})}
+function sigs(P,labels){
+  const d=P.doc,colW=(P.W-40)/2;
+  for(let i=0;i<labels.length;i+=2){need(P,58);P.y+=30;
+    labels.slice(i,i+2).forEach((l,j)=>{const x=P.M+j*(colW+40);d.setDrawColor(90);d.setLineWidth(.6);d.line(x,P.y,x+colW,P.y);
+      const [a,b]=Array.isArray(l)?l:[l,''];setF(P,8.6,'bold',30);d.text(a,x,P.y+12);if(b){setF(P,7.8,'normal',110);d.text(d.splitTextToSize(b,colW)[0],x,P.y+23)}});
+    P.y+=32}
+}
+function box(P,y0,h,fill){P.doc.setDrawColor(150);P.doc.setLineWidth(.8);if(fill){P.doc.setFillColor(...fill);P.doc.roundedRect(P.M,y0,P.W,h,6,6,'FD')}else P.doc.roundedRect(P.M,y0,P.W,h,6,6,'S')}
+function checkbox(P,label,checked){need(P,16);const d=P.doc;d.setDrawColor(80);d.setLineWidth(.7);d.rect(P.M+4,P.y+1,9,9);if(checked){setF(P,9,'bold',20);d.text('X',P.M+5.6,P.y+9)}
+  txt(P,label,{indent:20,after:4})}
+function footer(P,doc){const n=doc.getNumberOfPages(),now=new Date().toLocaleString('pt-BR');
+  for(let i=1;i<=n;i++){doc.setPage(i);setF(P,7.2,'normal',140);doc.text(`${doc.__titulo||''}  |  Gerado em ${now} pelo Controle de Armários | RH`,P.M,P.H-28);doc.text(`Página ${i} de ${n}`,P.M+P.W,P.H-28,{align:'right'})}}
+
+function termoBody(P,a,c,via){
+  const cf=CFG(),dias=+cf.prazoGuarda||30,emp=cf.razao||'a empresa identificada no cabeçalho';
+  header(P,'Termo de responsabilidade pelo uso de armário','Armários masculinos do vestiário da unidade Patos de Minas/MG',via);
+  txt(P,'Identificação',{bold:true,size:10.2,after:6,color:15});
+  fields(P,[['Colaborador',c?.nome],['Matrícula',c?.matricula],['Cargo',c?.cargo],['Setor e turno',c?[c.setor,c.turno].filter(Boolean).join(', '):''],['Armário nº',a?pad(a.numero):''],['Chave nº',a?.chaveNum],['Localização',a?.localizacao],['Data da entrega',a?.dataOcupacao?fD(a.dataOcupacao):'']]);
+  txt(P,`Pelo presente termo, o(a) colaborador(a) acima identificado(a), doravante COLABORADOR, declara receber de ${emp}, doravante EMPRESA, o armário acima identificado, e assume as responsabilidades e condições a seguir.`,{after:12});
+  clause(P,1,'Uso do armário','O armário é de propriedade da EMPRESA e é cedido gratuitamente, para uso pessoal e intransferível, exclusivamente para a guarda de roupas, calçados, uniformes e objetos pessoais de uso no trabalho, enquanto durar o vínculo de emprego ou até que o RH solicite a devolução ou a troca.');
+  clause(P,2,'Estado de conservação e devolução','O COLABORADOR declara ter recebido o armário limpo e em bom estado de conservação e funcionamento, salvo o registrado no campo Observações, e se compromete a devolvê-lo nas mesmas condições em que o recebeu, vazio e acompanhado da chave, ressalvado o desgaste natural do uso. A devolução é obrigatória no desligamento, na troca de armário ou quando solicitada pelo RH.');
+  clause(P,3,'Chaves','O armário possui duas chaves. Uma cópia é entregue ao COLABORADOR neste ato, e a outra permanece sob a guarda do RH, para uso exclusivo nas situações previstas na cláusula 7. É proibido fazer cópias da chave, trocar a fechadura ou instalar cadeado sem autorização do RH.');
+  clause(P,4,'Itens proibidos','É proibido guardar no armário, entre outros: armas de fogo, munições e simulacros; facas, canivetes e demais objetos cortantes ou perfurantes que não sejam ferramentas de trabalho autorizadas pela EMPRESA; drogas e substâncias ilícitas; bebidas alcoólicas; produtos inflamáveis, explosivos ou químicos; produtos e mercadorias da EMPRESA sem comprovante de aquisição; alimentos perecíveis; e qualquer objeto ilícito ou que ofereça risco à segurança e à saúde das pessoas. O descumprimento poderá resultar na aplicação de medidas disciplinares, sem prejuízo das providências legais cabíveis.');
+  clause(P,5,'Pertences pessoais','A EMPRESA não se responsabiliza por dinheiro, objetos de valor ou quaisquer pertences deixados no armário. Cabe ao COLABORADOR manter o armário trancado, guardar a chave com cuidado e evitar deixar itens de valor em seu interior.');
+  clause(P,6,'Perda da chave e danos ao armário','Em caso de perda, extravio ou dano da chave, o COLABORADOR deverá comunicar o RH imediatamente. Nos termos do art. 462, § 1º, da CLT, o COLABORADOR autoriza expressamente o desconto em folha de pagamento: (a) do custo de confecção de nova chave ou de troca do segredo ou da fechadura, em caso de perda ou extravio da chave; e (b) do custo de reparo ou reposição, em caso de dano ao armário causado por dolo ou por culpa, como mau uso ou negligência. O valor será apurado por orçamento ou nota fiscal e informado previamente ao COLABORADOR, que poderá se manifestar antes do desconto, observados os limites previstos em lei e em norma coletiva.');
+  clause(P,7,'Abertura do armário pela EMPRESA','O COLABORADOR declara ciência e concorda que o RH poderá abrir o armário com a chave reserva nas seguintes situações: (a) desligamento sem a devolução do armário; (b) não comparecimento ao RH no prazo de 48 (quarenta e oito) horas após notificação afixada no armário; (c) manutenção, limpeza ou dedetização, mediante aviso prévio; (d) situação de risco iminente à segurança ou à saúde. A abertura será feita, sempre que possível, na presença do COLABORADOR. Na sua ausência, será realizada por representante do RH, na presença de ao menos duas testemunhas, com lavratura de termo de abertura e inventário dos pertences encontrados.');
+  clause(P,8,'Guarda e destinação dos pertences',`Os pertences retirados do armário serão relacionados em inventário e ficarão sob a guarda do RH pelo prazo de ${dias} (${dias===30?'trinta':String(dias)}) dias, para retirada pelo COLABORADOR mediante recibo. Encerrado esse prazo sem retirada, os pertences poderão ser doados ou descartados, com registro. Itens perecíveis poderão ser descartados no ato da abertura, e itens ilícitos serão entregues às autoridades competentes.`);
+  clause(P,9,'Disposições gerais','Os dados deste termo são tratados pela EMPRESA exclusivamente para a gestão dos armários, nos termos da Lei nº 13.709/2018 (LGPD). O uso indevido do armário sujeita o COLABORADOR às medidas disciplinares cabíveis. O COLABORADOR declara ter lido este termo, compreendido suas condições e recebido uma via assinada.');
+  need(P,60);txt(P,'Observações sobre o estado do armário na entrega:',{bold:true,size:9.4,after:4,color:15});
+  if(a&&a.obs)txt(P,a.obs,{after:4});
+  for(let i=0;i<2;i++){need(P,18);P.y+=14;P.doc.setDrawColor(190);P.doc.line(P.M,P.y,P.M+P.W,P.y)}P.y+=14;
+  txt(P,`Patos de Minas/MG, ${a&&a.dataOcupacao?extenso(new Date(a.dataOcupacao+'T12:00')):'_____ de ____________________ de ________'}.`,{after:6});
+  sigs(P,[['Colaborador',c?c.nome+', matrícula '+c.matricula:'Nome e matrícula'],['Responsável RH','Nome e assinatura'],['Testemunha 1','Nome legível'],['Testemunha 2','Nome legível']]);
+}
+async function pdfTermo(n){
+  const a=n?armOf(n):null,c=a&&a.colabId?S.col[a.colabId]:null;
+  const P=await newPdf();P.doc.__titulo='Termo de responsabilidade pelo uso de armário';
+  termoBody(P,a,c,'1ª via: RH');P.doc.addPage();P.y=P.M;termoBody(P,a,c,'2ª via: Colaborador');footer(P,P.doc);
+  const ok=await saveFile(n?`termo-responsabilidade-armario-${pad(n)}${c?'-'+c.matricula:''}.pdf`:'termo-responsabilidade-armario-em-branco.pdf',P.doc.output('arraybuffer'),'application/pdf');
+  if(ok&&a&&c)await addMov({tipo:'Documento emitido',armario:n,colabId:c.id,nome:c.nome,matricula:c.matricula,obs:'Termo de responsabilidade gerado para assinatura (2 vias)'});
+  return ok;
+}
+async function pdfNotif(n,afixStr){
+  const cf=CFG(),dias=+cf.prazoGuarda||30,blank=!n;
+  const afix=afixStr?new Date(afixStr):null,pz=afix?prazo48(afix):null;
+  const P=await newPdf(),d=P.doc;d.__titulo='Notificação para comparecimento ao RH';
+  d.setFillColor(91,110,44);d.rect(0,0,595.28,10,'F');
+  P.y=40;try{d.addImage(FARID_LOGO,'JPEG',P.M+P.W/2-70,P.y,140,45.5)}catch(e){}P.y+=56;txt(P,cf.razao||'Recursos Humanos',{size:9,color:110,align:'center',after:2});txt(P,'Recursos Humanos, unidade Patos de Minas/MG',{size:9,color:110,align:'center',after:22});
+  txt(P,'NOTIFICAÇÃO',{size:30,bold:true,align:'center',after:2,color:15});
+  txt(P,'Comparecimento ao RH para atualização de dados',{size:12,align:'center',color:80,after:22});
+  const y0=P.y;box(P,y0,150,[246,247,241]);setF(P,12,'bold',[91,110,44]);d.text('ARMÁRIO Nº',P.M+P.W/2,y0+30,{align:'center'});
+  setF(P,84,'bold',15);d.text(blank?'_____':pad(n),P.M+P.W/2,y0+118,{align:'center'});P.y=y0+172;
+  txt(P,'Ao usuário deste armário:',{bold:true,size:12,after:8,color:15});
+  txt(P,'Solicitamos que você compareça ao setor de Recursos Humanos, levando a chave deste armário, para a atualização dos dados de uso, dentro do prazo indicado abaixo.',{size:12,lh:1.45,after:16});
+  const y1=P.y;box(P,y1,62,[255,246,224]);setF(P,10,'bold',[150,90,0]);d.text('PRAZO PARA COMPARECIMENTO (48 HORAS)',P.M+16,y1+22);
+  setF(P,15,'bold',15);d.text(pz?`Até ${fDTlong(pz.p)}`:'Até ____/____/________, às ____:____',P.M+16,y1+46);P.y=y1+78;
+  txt(P,`O não comparecimento no prazo indicado autoriza a empresa a abrir este armário com a chave reserva, na presença de testemunhas, e a retirar os pertences encontrados, que serão relacionados em inventário e ficarão sob a guarda do RH pelo prazo de ${dias} dias, para retirada mediante recibo.`,{size:11,lh:1.45,after:10});
+  txt(P,`Atendimento do RH: ${cf.atendimento||'em horário comercial'}.`,{size:11,after:22});
+  rule(P,16);
+  fields(P,[['Afixado em',afix?`${afix.toLocaleDateString('pt-BR')}, às ${afix.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:''],['Responsável RH',''],['Testemunha da afixação',''],['Assinatura do responsável','']]);
+  if(pz&&pz.moved)txt(P,'O prazo de 48 horas terminaria no fim de semana e foi estendido para o primeiro dia útil seguinte, no mesmo horário.',{size:8,color:120,after:4});
+  footer(P,d);
+  const ok=await saveFile(blank?'notificacao-48h-em-branco.pdf':`notificacao-48h-armario-${pad(n)}.pdf`,d.output('arraybuffer'),'application/pdf');
+  if(ok&&!blank&&afix){
+    const a=await guard(n,a=>{if(!a)fail('Armário não encontrado.');return a});
+    const c=a.colabId?S.col[a.colabId]:null;
+    await put('armarios',aid(n),{...a,notif:{em:afix.toISOString(),prazo:pz.p.toISOString(),por:S.me.id},ultimaMov:new Date().toISOString()});
+    await addMov({tipo:'Notificação',armario:n,colabId:c?c.id:null,nome:c?.nome||'',matricula:c?.matricula||'',obs:`Notificação de 48 h afixada em ${afix.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}. Prazo: ${pz.p.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`});
+  }
+  return ok;
+}
+async function pdfAbertura(n,motivo){
+  const cf=CFG(),dias=+cf.prazoGuarda||30,a=n?armOf(n):null,c=a&&a.colabId?S.col[a.colabId]:null;
+  const P=await newPdf(),d=P.doc;d.__titulo='Termo de abertura de armário e inventário de pertences';
+  header(P,'Termo de abertura de armário e inventário de pertences','Preencher no ato da abertura, na presença das testemunhas');
+  fields(P,[['Armário nº',a?pad(a.numero):''],['Localização',a?.localizacao],['Usuário cadastrado',c?.nome],['Matrícula',c?.matricula],['Data da abertura',''],['Hora da abertura','']]);
+  txt(P,'Motivo da abertura',{bold:true,size:10,after:6,color:15});
+  const nt=a&&a.notif?` afixada em ${new Date(a.notif.em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}, com prazo até ${new Date(a.notif.prazo).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`:' afixada em ____/____/______ às ____:____';
+  checkbox(P,'Desligamento do colaborador sem devolução do armário',motivo==='desligamento');
+  checkbox(P,`Não comparecimento ao RH após notificação${nt}`,motivo==='notificacao');
+  checkbox(P,'Manutenção, limpeza ou dedetização, com aviso prévio',motivo==='manutencao');
+  checkbox(P,'Risco iminente à segurança ou à saúde',motivo==='risco');
+  checkbox(P,'Outro: ________________________________________________',motivo==='outro');
+  P.y+=6;txt(P,'Na data e hora acima, o armário foi aberto pelo RH com a chave reserva, na presença das pessoas que assinam este termo, e foram encontrados os itens relacionados abaixo.',{after:10});
+  const cols=[['Nº',26],['Item e descrição',P.W-26-40-110-70],['Qtd',40],['Estado',110],['Destino',70]],rh=19;
+  need(P,rh*3);let x=P.M;d.setFillColor(240,242,234);d.rect(P.M,P.y,P.W,rh,'F');setF(P,8.4,'bold',40);
+  cols.forEach(([l,w])=>{d.text(l,x+5,P.y+13);x+=w});P.y+=rh;
+  for(let i=1;i<=14;i++){need(P,rh);x=P.M;d.setDrawColor(200);d.setLineWidth(.5);d.line(P.M,P.y+rh,P.M+P.W,P.y+rh);setF(P,8,'normal',150);d.text(String(i),x+5,P.y+13);
+    cols.forEach(([,w])=>{x+=w;if(x<P.M+P.W-1)d.line(x,P.y,x,P.y+rh)});P.y+=rh}
+  P.y+=6;txt(P,'Destino: G = guardado no RH; D = devolvido ao colaborador; P = descartado por ser perecível; A = entregue à autoridade competente.',{size:8,color:110,after:10});
+  checkbox(P,'Armário em bom estado após a abertura',false);checkbox(P,'Armário com avarias: _________________________________________',false);
+  P.y+=4;txt(P,`Os pertences guardados ficarão sob a guarda do RH por ${dias} dias a partir desta data, para retirada pelo colaborador mediante recibo. Após esse prazo, poderão ser doados ou descartados, com registro.`,{after:6});
+  sigs(P,[['Responsável RH','Nome e assinatura'],['Colaborador (se presente)',c?c.nome:'Nome e assinatura'],['Testemunha 1','Nome legível'],['Testemunha 2','Nome legível']]);
+  need(P,110);P.y+=8;rule(P,12);txt(P,'Recibo de retirada dos pertences',{bold:true,size:10,after:4,color:15});
+  txt(P,'Declaro ter recebido os pertences relacionados neste termo com destino G, no estado em que se encontram.',{after:4});
+  sigs(P,[['Colaborador','Nome, assinatura e data'],['Responsável RH','Nome, assinatura e data']]);
+  footer(P,d);
+  const ok=await saveFile(n?`termo-abertura-armario-${pad(n)}.pdf`:'termo-abertura-armario-em-branco.pdf',d.output('arraybuffer'),'application/pdf');
+  if(ok&&a)await addMov({tipo:'Documento emitido',armario:n,colabId:c?c.id:null,nome:c?.nome||'',matricula:c?.matricula||'',obs:'Termo de abertura e inventário gerado para preenchimento'});
+  return ok;
+}
+async function encerrarNotif(n){const a=await guard(n,a=>{if(!a||!a.notif)fail('Este armário não tem notificação em andamento.');return a});
+  const c=a.colabId?S.col[a.colabId]:null;await put('armarios',aid(n),{...a,notif:null});
+  await addMov({tipo:'Notificação',armario:n,colabId:c?c.id:null,nome:c?.nome||'',matricula:c?.matricula||'',obs:'Notificação encerrada: usuário compareceu ao RH ou situação regularizada'})}
+function fNotif(n){
+  openModal(()=>formModal('notif','Notificação de 48 horas',n?`${lname(n)}. O PDF sai pronto para imprimir e afixar na porta.`:'Selecione o armário e o horário de afixação.',`<div class="fgrid">
+   ${n?`<input type="hidden" name="numero" value="${n}">`:`<label class="field full"><span>Armário</span><select class="inp" name="numero" required>${opts(activeArms().map(a=>[a.numero,lname(a.numero)+(a.colabId&&S.col[a.colabId]?', '+S.col[a.colabId].nome:'')]),'','Selecione')}</select></label>`}
+   <label class="field full"><span>Data e hora da afixação</span><input class="inp" type="datetime-local" name="afix" value="${dtLocalNow()}" required></label>
+   <p class="hint full">O prazo de comparecimento é calculado em 48 horas. Se terminar no sábado ou domingo, passa para segunda-feira no mesmo horário. O nome do usuário não aparece no aviso, que fica exposto no vestiário.</p></div>`,'Gerar notificação'));
+}
+function fAbertura(n){
+  const a=armOf(n);const sug=a&&a.notif?'notificacao':a&&a.colabId&&S.col[a.colabId]?.situacao==='Desligado'?'desligamento':'';
+  openModal(()=>formModal('abertura','Termo de abertura e inventário',lname(n)+'. Imprima e preencha no ato da abertura, com duas testemunhas.',`<input type="hidden" name="numero" value="${n}">
+   <label class="field"><span>Motivo da abertura</span><select class="inp" name="motivo">${opts([['desligamento','Desligamento sem devolução'],['notificacao','Não comparecimento após notificação'],['manutencao','Manutenção, limpeza ou dedetização'],['risco','Risco à segurança ou à saúde'],['outro','Outro']],sug,'Marcar à mão')}</select></label>`,'Gerar termo'));
+}
+function offerTermo(n){
+  const a=armOf(n),c=a&&S.col[a.colabId];
+  openModal(()=>`${mh('Armário vinculado',c?esc(c.nome)+', '+lname(n):'')}<div class="mbody"><p style="margin-top:4px">Gere o termo de responsabilidade em duas vias para o colaborador assinar na entrega da chave.</p></div>
+   <div class="mfoot"><button class="btn" data-act="close">Agora não</button><button class="btn pri" data-act="doc-termo" data-n="${n}">Gerar termo de responsabilidade</button></div>`);
+}
+async function runDoc(el,fn){if(el)el.disabled=true;const ok=await run(async()=>{toast('Gerando PDF…');const r=await fn();if(r)toast('PDF gerado.')});if(el&&document.contains(el))el.disabled=false;return ok}
+
+PAGES.documentos={
+ head(){
+  const occ=arms().filter(a=>a.status==='ocupado'),act=activeArms(),lab=a=>[a.numero,lname(a.numero)+(a.colabId&&S.col[a.colabId]?', '+S.col[a.colabId].nome:'')];
+  return `<div class="stack" style="margin-bottom:16px">
+  <section class="panel"><h2>Termo de responsabilidade</h2>
+   <p class="hint" style="margin:-6px 2px 12px">Entrega do armário: uso pessoal, chave em duas cópias (colaborador e RH), itens proibidos, isenção sobre pertences, autorização de desconto por perda de chave ou dano e regras de abertura. Sai em duas vias.</p>
+   <div class="toolbar" style="margin:0"><select class="inp grow" id="d-termo" aria-label="Armário ocupado">${opts(occ.map(lab),'',occ.length?'Selecione o armário ocupado':'Nenhum armário ocupado')}</select>
+   <button class="btn pri" data-act="doc-termo" data-sel="d-termo">Gerar preenchido</button><button class="btn" data-act="doc-termo">Em branco</button></div></section>
+  <section class="panel"><h2>Notificação de 48 horas</h2>
+   <p class="hint" style="margin:-6px 2px 12px">Aviso para afixar na porta do armário pedindo que o usuário procure o RH em até 48 horas. Ao gerar, o armário passa a constar em Pendências até o comparecimento ou a abertura.</p>
+   <div class="toolbar" style="margin:0"><button class="btn pri" data-act="doc-notif">Gerar notificação</button><button class="btn" data-act="doc-notif-blank">Em branco</button></div></section>
+  <section class="panel"><h2>Termo de abertura e inventário</h2>
+   <p class="hint" style="margin:-6px 2px 12px">Usado quando o RH abre o armário com a chave reserva: motivo, presentes, lista de pertences, destino de cada item e recibo de retirada.</p>
+   <div class="toolbar" style="margin:0"><select class="inp grow" id="d-abert" aria-label="Armário">${opts(act.map(lab),'','Selecione o armário')}</select>
+   <button class="btn pri" data-act="doc-abert" data-sel="d-abert">Gerar</button><button class="btn" data-act="doc-abert-blank">Em branco</button></div></section></div>`},
+ body(){
+  const L=arms().filter(a=>a.notif);
+  return `<section class="panel"><h2>Notificações em andamento</h2>${L.length?tbl(['Armário','Usuário cadastrado','Afixada em','Prazo','Situação',''],L.map(a=>{const c=a.colabId?S.col[a.colabId]:null,venc=new Date(a.notif.prazo)<new Date();
+    return `<tr><td class="num">${pad(a.numero)}</td><td>${c?esc(c.nome):'—'}</td><td>${fTs(a.notif.em)} ${fHr(a.notif.em)}</td><td>${fTs(a.notif.prazo)} ${fHr(a.notif.prazo)}</td><td>${venc?'<span class="bdg bad">Prazo vencido</span>':'<span class="bdg res">No prazo</span>'}</td>
+    <td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${a.numero}">Compareceu</button> <button class="btn sm ${venc?'pri':''}" data-act="doc-abert" data-n="${a.numero}">Termo de abertura</button></td></tr>`})):'<p class="small muted">Nenhuma notificação em andamento.</p>'}</section>`;
+ }};
+
+/* ---------- busca global ---------- */
+function gsearch(v){
+  const box=$('#gres');const q=norm(v);
+  if(!q){box.hidden=true;box.innerHTML='';return}
+  const digits=q.replace(/^0+/,'');
+  const A=/^\d+$/.test(q)?arms().filter(a=>String(a.numero)===digits||pad(a.numero).startsWith(q)).slice(0,4):[];
+  const C=cols().filter(c=>norm(c.nome).includes(q)||norm(c.matricula).includes(q)).slice(0,7);
+  let h=A.map(a=>{const c=a.colabId?S.col[a.colabId]:null;return `<button data-act="armario" data-n="${a.numero}"><span class="num" style="font-family:var(--cond);font-weight:700;font-size:18px">${pad(a.numero)}</span><span style="flex:1">${lname(a.numero)}${c?`<span class="small muted">, ${esc(c.nome)}</span>`:''}</span>${bdg(a.status)}</button>`}).join('');
+  h+=C.map(c=>`<button data-act="colab" data-id="${esc(c.id)}"><span style="flex:1"><b>${esc(c.nome)}</b><br><span class="small muted">Matrícula ${esc(c.matricula)}${c.setor?', '+esc(c.setor):''}</span></span>${(c.armarios||[]).length?`<span class="bdg bad">${c.armarios.map(pad).join(', ')}</span>`:'<span class="small muted">Sem armário</span>'}</button>`).join('');
+  box.innerHTML=h||'<div class="none">Nada encontrado para essa busca.</div>';box.hidden=false;
+}
+
+/* ---------- eventos ---------- */
+const ACT={
+  go:d=>go(d.r),menu:()=>$('#shell').classList.toggle('open'),close:closeModal,
+  esqueci:()=>{const em=($('#root input[name=email]')?.value||'').trim();const err=$('#ferr');if(!em){if(err)err.textContent='Digite seu e-mail no campo acima e clique de novo em Esqueci minha senha.';return}
+    run(()=>enviarLinkSenha(em),'Se o e-mail estiver cadastrado, você receberá um link para criar nova senha.')},
+  'minha-senha':fMinhaSenha,
+  retry:()=>{if(S.me)afterLogin({id:S.me.id,email:S.me.email})},
+  'user-reset':d=>{const r=S.acesso[d.id];if(r&&confirm(`Enviar para ${r.email} um link para criar nova senha?`))run(()=>enviarLinkSenha(r.email),'Link enviado por e-mail.')},
+  logout:async()=>{S.inApp=false;closeModal();try{await SB.auth.signOut()}catch(e){}if(RT){try{SB.removeChannel(RT)}catch(e){}RT=null}S.me=null;S.role=null;renderLogin('login')},
+  armario:d=>{$('#gres')&&($('#gres').hidden=true);mdArm(+d.n)},
+  colab:d=>{$('#gres')&&($('#gres').hidden=true);mdCol(d.id)},
+  mapf:d=>{S.f.map.st=d.st&&S.f.map.st!==d.st?d.st:'';schedule()},
+  'novo-colab':()=>fColab(null),'edit-colab':d=>fColab(d.id),importar:fImport,
+  'novo-arm':()=>fArm(null),'edit-arm':d=>fArm(+d.n),
+  vincular:d=>fVincular(d.n?+d.n:null,d.id||(d.n&&armOf(+d.n)?.reservaPara)||null),
+  devolver:d=>fDevolver(+d.n),'devolver-manut':d=>fDevolver(+d.n,'manutencao'),
+  'trocar-armario':d=>fTrocaArm(d.id,+d.n),'trocar-colab':d=>fTrocaCol(+d.n),
+  'pick-dev':()=>fPick('dev'),'pick-troca':()=>fPick('troca'),
+  reservar:d=>fReservar(+d.n),manut:d=>fManut(+d.n),
+  'cancelar-reserva':d=>run(()=>setStatus(+d.n,['reservado'],'disponivel','Liberação','Reserva cancelada',{reservaPara:null,reservaObs:null}),'Reserva cancelada.'),
+  'concluir-manut':d=>run(()=>setStatus(+d.n,['manutencao'],'disponivel','Liberação','Manutenção concluída',{manutObs:null}),'Armário liberado.'),
+  inativar:d=>{if(confirm(`Inativar o ${lname(+d.n)}? Ele deixa de contar no total e não poderá ser atribuído.`))run(()=>setStatus(+d.n,['disponivel'],'inativo','Inativação','Inativado pelo RH',{autoInativo:false}),'Armário inativado.')},
+  reativar:d=>run(()=>setStatus(+d.n,['inativo'],'disponivel','Reativação','Reativado pelo RH',{autoInativo:false}),'Armário reativado.'),
+  'hist-arm':d=>{const k='a'+d.n;if(S.ui.hist&&S.ui.hist.key===k){S.ui.hist=null;refreshModal()}else loadHist(k,'armario',+d.n)},
+  'pend-nova':fPend,
+  'doc-termo':(d,el)=>{let n=d.n?+d.n:null;if(d.sel){n=+($('#'+d.sel)?.value||0);if(!n){toast('Selecione um armário ocupado.','err');return}}if(MOD&&!d.sel)closeModal();runDoc(el,()=>pdfTermo(n))},
+  'doc-notif':d=>fNotif(d.n?+d.n:null),
+  'doc-notif-blank':(d,el)=>runDoc(el,()=>pdfNotif(null,null)),
+  'doc-abert':d=>{let n=d.n?+d.n:+($('#'+(d.sel||'x'))?.value||0);if(!n){toast('Selecione o armário.','err');return}fAbertura(n)},
+  'doc-abert-blank':(d,el)=>runDoc(el,()=>pdfAbertura(null,'')),
+  'notif-fim':d=>run(()=>encerrarNotif(+d.n),'Notificação encerrada.'),
+  'pend-resolver':d=>{const p=S.pend[d.id];if(p)run(()=>put('pendencias',d.id,{...p,resolvida:true,resolvidaEm:new Date().toISOString(),resolvidaPor:S.me.id}),'Pendência resolvida.')},
+  'rel-tab':d=>{S.f.rel.t=d.t;go('relatorios')},
+  export:async(d,el)=>{el.disabled=true;await run(async()=>{const ok=await doExport(d.fmt);if(ok)toast('Arquivo gerado.')});el.disabled=false},
+  tpl:()=>run(()=>saveFile('modelo-colaboradores.csv','\uFEFFMatrícula;Nome;Cargo;Setor;Turno;Admissão;Situação\n12345;João da Silva;Conferente;Distribuição;Noturno;05/08/2026;Ativo\n','text/csv')),
+  'user-toggle':d=>{const r=S.acesso[d.id];if(r)run(()=>put('acesso',d.id,{...r,ativo:!r.ativo}),r.ativo?'Acesso desativado.':'Acesso ativado.')}
+};
+async function run(fn,ok){try{await fn();if(ok)toast(ok);return true}catch(e){toast(errMsg(e),'err');return false}}
+
+const FORMS={
+  colab:async v=>{const r=await saveColab(v);closeModal();toast(v.id?'Cadastro atualizado.':'Colaborador cadastrado.');if(r.virouDesligado)alertDesligado(r.id)},
+  arm:async v=>{await saveArm(v);closeModal();toast(v.orig?'Armário atualizado.':'Armário cadastrado.')},
+  vincular:async v=>{const c=resolveCol(v.colab);if(!c)fail('Selecione um colaborador da lista.');if(!v.numero)fail('Selecione um armário disponível.');await doVincular(c.id,+v.numero,v.data,v.chave,(v.obs||'').trim(),!!v.multi);toast(`${lname(+v.numero)} vinculado a ${c.nome}.`);offerTermo(+v.numero)},
+  devolver:async v=>{if(!(v.receb||'').trim())fail('Informe o responsável pelo recebimento.');await doDevolver(+v.numero,v.data,v.chave,v.receb.trim(),(v.obs||'').trim(),v.destino);closeModal();toast('Devolução registrada.')},
+  trocaArm:async v=>{if(!v.novo)fail('Selecione o novo armário.');if(!(v.motivo||'').trim())fail('Informe o motivo da troca.');await doTrocaArm(v.colab,+v.antigo,+v.novo,v.chaveAntiga,v.chaveNova,v.data,v.motivo.trim());closeModal();toast('Troca registrada.')},
+  trocaCol:async v=>{const c=resolveCol(v.colab);if(!c)fail('Selecione o novo ocupante da lista.');if(!(v.motivo||'').trim())fail('Informe o motivo da troca.');await doTrocaCol(+v.numero,c.id,v.data,v.chave,v.motivo.trim(),!!v.multi);closeModal();toast('Troca registrada.')},
+  reservar:async v=>{let c=null;if((v.colab||'').trim()){c=resolveCol(v.colab);if(!c)fail('Colaborador não encontrado. Selecione da lista ou deixe em branco.')}
+    await setStatus(+v.numero,['disponivel'],'reservado','Reserva',[c?'Reservado para '+c.nome:'Reserva sem colaborador definido',(v.obs||'').trim()].filter(Boolean).join('. '),{reservaPara:c?c.id:null,reservaObs:(v.obs||'').trim()});closeModal();toast('Armário reservado.')},
+  manut:async v=>{if(!(v.obs||'').trim())fail('Informe o motivo da manutenção.');await setStatus(+v.numero,['disponivel','reservado'],'manutencao','Manutenção',v.obs.trim(),{manutObs:v.obs.trim(),reservaPara:null,reservaObs:null});closeModal();toast('Armário em manutenção.')},
+  notif:async v=>{if(!v.numero)fail('Selecione o armário.');if(!v.afix)fail('Informe a data e a hora da afixação.');const n=+v.numero;const ok=await pdfNotif(n,v.afix);if(ok){closeModal();toast('Notificação gerada e registrada.')}},
+  abertura:async v=>{const ok=await pdfAbertura(+v.numero,v.motivo);if(ok){closeModal();toast('Termo de abertura gerado.')}},
+  pend:async v=>{if(!(v.texto||'').trim())fail('Descreva a pendência.');const id=uid();await put('pendencias',id,{id,texto:v.texto.trim(),armario:v.armario?+v.armario:null,criadaEm:new Date().toISOString(),por:S.me.id,resolvida:false});closeModal();toast('Pendência registrada.')},
+  pick:async v=>{const c=resolveCol(v.colab);if(!c||!(c.armarios||[]).length)fail('Selecione um colaborador com armário vinculado.');closeModal();if(v.kind==='dev'){if(c.armarios.length>1)mdCol(c.id);else fDevolver(c.armarios[0])}else fTrocaArm(c.id,c.armarios[0])},
+  import:async()=>{const r=await doImport();closeModal();toast(`${r.n} colaborador(es) importado(s).`);if(r.desl)toast(`${r.desl} colaborador(es) desligado(s) com armário. Veja Pendências.`,'err')},
+  cfg:async v=>{await saveCfg(v);toast('Configurações salvas.');go('configuracoes')},
+  login:async v=>{const email=(v.email||'').trim(),senha=v.senha||'';if(!email||!senha)fail('Informe e-mail e senha.');
+    const {data,error}=await SB.auth.signInWithPassword({email,password:senha});
+    if(error){if(/confirm/i.test(error.message))fail('Este e-mail ainda não foi confirmado. Veja o passo 4 do guia ou peça ao Administrador RH.');fail('E-mail ou senha incorretos.')}
+    await afterLogin(data.user)},
+  novasenha:async v=>{await trocarSenha(v);const {data}=await SB.auth.getUser();history.replaceState(null,'',location.pathname);toast('Senha alterada.');if(data&&data.user)await afterLogin(data.user);else renderLogin('login')},
+  minhasenha:async v=>{await trocarSenha(v);closeModal();toast('Senha alterada.')},
+  novousuario:async(v)=>{const r=await criarUsuario(v);const f=$('form[data-form=novousuario]');if(f)f.reset();toast(r.confirmar?'Usuário criado. Ele precisa confirmar o e-mail antes de entrar.':'Usuário criado e liberado.')}
+};
+function alertDesligado(id){
+  const c=S.col[id];if(!c)return;
+  openModal(()=>{const cc=S.col[id]||c;const A=(cc.armarios||[]).map(armOf).filter(Boolean);
+    return `${mh('Atenção')}<div class="mbody"><div class="alert-h" role="alert">⚠️ COLABORADOR DESLIGADO COM ARMÁRIO VINCULADO</div>
+    ${A.length?A.map(a=>`<dl class="dl"><dt>Nome</dt><dd>${esc(cc.nome)}</dd><dt>Matrícula</dt><dd>${esc(cc.matricula)}</dd><dt>Armário</dt><dd>${lname(a.numero)}</dd><dt>Situação da chave</dt><dd>${keyB(a.chaveSit)}</dd><dt>Última movimentação</dt><dd>${a.ultimaMov?fTs(a.ultimaMov)+' '+fHr(a.ultimaMov):'—'}</dd></dl>`).join('<hr style="border:0;border-top:1px solid var(--line)">'):'<p>Devolução já registrada.</p>'}
+    <p class="hint">A pendência fica em Pendências até a devolução ser registrada.</p></div>
+    <div class="mfoot"><button class="btn" data-act="close">Registrar depois</button>${A.map(a=>`<button class="btn pri" data-act="devolver" data-n="${a.numero}">Registrar devolução do ${pad(a.numero)}</button>`).join('')}</div>`},{live:true});
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');
+  if(!t){if(!e.target.closest('.gsearch')&&$('#gres'))$('#gres').hidden=true;return}
+  if(t.tagName==='A')e.preventDefault();
+  const f=ACT[t.dataset.act];if(f){e.stopPropagation();f(t.dataset,t,e)}
+});
+document.addEventListener('submit',async e=>{
+  const form=e.target.closest('form[data-form]');if(!form)return;e.preventDefault();
+  const fn=FORMS[form.dataset.form];if(!fn)return;
+  const btn=form.querySelector('button[type=submit],button:not([type])');const err=form.querySelector('#ferr');if(err)err.textContent='';
+  if(btn)btn.disabled=true;
+  try{await fn(Object.fromEntries(new FormData(form)))}
+  catch(ex){const m=errMsg(ex);if(err&&document.contains(err))err.textContent=m;else toast(m,'err')}
+  finally{if(btn&&document.contains(btn))btn.disabled=false}
+});
+let ft=0;
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.id==='gs'){gsearch(t.value);return}
+  const k=t.dataset.f;if(!k)return;
+  const [p,f]=k.split('.');S.f[p][f]=t.value;
+  clearTimeout(ft);ft=setTimeout(()=>{if((f==='de'||f==='ate')&&(p==='mov'||p==='rel'))loadPeriod(S.f[p].de,S.f[p].ate);schedule()},t.type==='date'||t.tagName==='SELECT'?0:160);
+});
+document.addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.dataset.chg==='perfil'){const r=S.acesso[t.dataset.id];if(r)run(()=>put('acesso',t.dataset.id,{...r,perfil:t.value}),'Perfil atualizado.');return}
+  if(t.dataset.chg==='impfile'){const file=t.files&&t.files[0];if(!file)return;S.ui.imp={loading:true};$('#impprev').innerHTML=impPreview();
+    try{S.ui.imp={rows:await readImport(file)}}catch(ex){S.ui.imp=null;$('#ferr').textContent=errMsg(ex)}$('#impprev').innerHTML=impPreview()}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(MOD)closeModal();else if($('#gres'))$('#gres').hidden=true}
+  if(e.key==='Enter'&&e.target.id==='gs'){
+    e.preventDefault();const q=e.target.value.trim();
+    if(/^\d+$/.test(q)&&armOf(+q)){$('#gres').hidden=true;mdArm(+q);return}
+    const first=$('#gres button');if(first)first.click();
+  }
+});
+
+boot();
+</script>
+</body>
+</html>
