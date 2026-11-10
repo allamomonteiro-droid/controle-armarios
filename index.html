@@ -195,18 +195,17 @@ input[type=file].inp{padding:8px 16px;height:auto;border-radius:20px}
 .mapwrap{overflow-x:auto;padding:24px;border-radius:20px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow-card)}
 .floor{height:1px;margin-top:16px;background:var(--line)}
 .map{display:grid;grid-template-columns:repeat(var(--cols),minmax(64px,1fr));gap:8px;min-width:calc(var(--cols) * 72px)}
-.lk{--dc:var(--ok-dot);position:relative;aspect-ratio:3/4;border:1px solid var(--line);border-radius:14px;background:var(--paper);cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:var(--ink);overflow:hidden;transition:transform .12s,opacity .2s,border-color .15s;touch-action:manipulation}
-.lk:hover{border-color:var(--ink)}
+.lk{--dc:var(--ok-dot);--bgc:#f1f8f4;--bdc:#d3e9dc;position:relative;aspect-ratio:3/4;border:1px solid var(--bdc);border-radius:14px;background:var(--bgc);cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:var(--ink);overflow:hidden;transition:transform .12s,opacity .2s,box-shadow .15s;touch-action:manipulation}
+.lk:hover{box-shadow:0 0 0 2px var(--bdc)}
 .lk:active{transform:scale(.96)}
-.lk::before{content:"";position:absolute;top:12px;left:30%;right:30%;height:8px;background:repeating-linear-gradient(180deg,currentColor 0 1px,transparent 1px 3px);opacity:.18}
+.lk::before{content:"";position:absolute;top:12px;left:30%;right:30%;height:8px;background:repeating-linear-gradient(180deg,currentColor 0 1px,transparent 1px 3px);opacity:.15}
 .lk .n{font-size:20px;line-height:1;letter-spacing:-.02em;position:absolute;top:40%;left:0;right:0;text-align:center}
 .lk .w{font-size:10px;line-height:1.2;width:100%;padding:0 6px 8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--slate)}
 .lk .s{position:absolute;top:8px;left:8px;width:6px;height:6px;border-radius:9999px;background:var(--dc)}
-.lk.ocupado{--dc:var(--bad-dot);background:var(--ink);border-color:var(--ink);color:#fff}
-.lk.ocupado .w{color:var(--stone)}
-.lk.reservado{--dc:var(--res-dot);background:var(--vellum);border-style:dashed;border-color:var(--stone)}
-.lk.manutencao{--dc:var(--mnt-dot);background:repeating-linear-gradient(135deg,var(--vellum) 0 6px,#e9e9e9 6px 12px);border-color:var(--line)}
-.lk.inativo{--dc:var(--ina-dot);background:transparent;border-style:dashed;color:var(--ash)}
+.lk.ocupado{--dc:var(--bad-dot);--bgc:#fcefed;--bdc:#f2cdc8}
+.lk.reservado{--dc:var(--res-dot);--bgc:#fff6e3;--bdc:#f1ddb0}
+.lk.manutencao{--dc:var(--mnt-dot);--bgc:#f4f4f4;--bdc:#e2e2e2;color:var(--pewter)}
+.lk.inativo{--dc:var(--ina-dot);--bgc:transparent;--bdc:#e5e7eb;border-style:dashed;color:var(--ash)}
 .lk.dim{opacity:.15}
 .lk .flag{position:absolute;top:5px;right:6px;font-size:11px;line-height:1}
 .mapnote{font-size:12px;color:var(--slate);margin:16px 4px 0}
@@ -317,7 +316,7 @@ const ST={
   manutencao:{l:'Manutenção',c:'mnt',e:'⚠️'},
   inativo:{l:'Inativo',c:'ina',e:'⚪'}
 };
-const GRAY={ocupado:'#171717',reservado:'#a0a0a0',manutencao:'#c7c7c7',disponivel:'#e5e7eb',inativo:'#f3f3f3'};
+const GRAY={ocupado:'#e8a39b',reservado:'#ebc779',manutencao:'#c7c7c7',disponivel:'#a9d4ba',inativo:'#f3f3f3'};
 const CHAVES=['Entregue','Devolvida','Perdida','Não entregue','Segunda via'];
 const SITS=['Ativo','Afastado','Desligado'];
 const TIPOS=['Ocupação','Devolução','Troca','Reserva','Manutenção','Liberação','Alteração de chave','Inativação','Reativação','Notificação','Documento emitido'];
