@@ -319,8 +319,8 @@ const ST={
 const GRAY={ocupado:'#d93636',reservado:'#f5b700',manutencao:'#6b7280',disponivel:'#1f9d55',inativo:'#f3f3f3'};
 const CHAVES=['Entregue','Devolvida','Perdida','Não entregue','Segunda via'];
 const SITS=['Ativo','Afastado','Desligado'];
-const TIPOS=['Ocupação','Devolução','Troca','Reserva','Manutenção','Liberação','Alteração de chave','Inativação','Reativação','Notificação','Documento emitido'];
-const TIPO_C={'Ocupação':'bad','Devolução':'ok','Troca':'oli','Reserva':'res','Manutenção':'mnt','Liberação':'ok','Alteração de chave':'neu','Inativação':'ina','Reativação':'neu','Notificação':'res','Documento emitido':'oli'};
+const TIPOS=['Ocupação','Devolução','Troca','Reserva','Manutenção','Liberação','Alteração de chave','Inativação','Reativação','Notificação','Documento emitido','Anexo'];
+const TIPO_C={'Ocupação':'bad','Devolução':'ok','Troca':'oli','Reserva':'res','Manutenção':'mnt','Liberação':'ok','Alteração de chave':'neu','Inativação':'ina','Reativação':'neu','Notificação':'res','Documento emitido':'oli','Anexo':'oli'};
 const DEF_CFG={qtd:0,colunas:10,localPadrao:'Vestiário masculino',setores:['Distribuição','Armazém','Administrativo','Vendas','Frota','Manutenção'],turnos:['Diurno','Noturno','Comercial'],razao:'',cnpj:'',prazoGuarda:30,atendimento:'de segunda a sexta-feira, em horário comercial'};
 
 const S={mode:null,me:null,role:null,inApp:false,route:'dashboard',
@@ -874,7 +874,7 @@ function openModal(fn,o={}){
   if(first&&!MOBILE.matches)first.focus({preventScroll:true});else m.querySelector('.mh .ib')?.focus({preventScroll:true});
 }
 function refreshModal(){if(MOD&&MOD.live){const b=$('#modal .mbox');if(b){const st=b.scrollTop;b.innerHTML=MOD.fn();b.scrollTop=st}}}
-function closeModal(){
+function closeModal(){S.ui.anx=null;
   MOD=null;S.ui.hist=null;const m=$('#modal');if(m.hidden)return;
   m.style.pointerEvents='none';const v=SH.closeV;SH.closeV=0;
   animateSheet(0,v,1,()=>{if(!MOD){m.hidden=true;m.innerHTML='';m.style.pointerEvents='';SH.p=0}});
@@ -912,7 +912,7 @@ const lockerSelect=(name,list,sel,label='Armário')=>`<label class="field"><span
 const keySelect=(name,sel,label='Situação da chave')=>`<label class="field"><span>${label}</span><select class="inp" name="${name}">${opts(CHAVES,sel)}</select></label>`;
 
 /* armário: detalhes */
-function mdArm(n){S.ui.hist=null;openModal(()=>armHtml(n),{live:true})}
+function mdArm(n){S.ui.hist=null;openModal(()=>armHtml(n),{live:true});loadAnexos('a'+n,'armario',n)}
 function armHtml(n){
   const a=armOf(n);if(!a)return mh(lname(n),'',true)+'<div class="mbody"><p>Armário não encontrado.</p></div>';
   const c=a.colabId?S.col[a.colabId]:null,rc=a.reservaPara?S.col[a.reservaPara]:null;
@@ -932,6 +932,7 @@ function armHtml(n){
   return `${mh(lname(n),`${bdg(a.status)} &nbsp;${esc(a.localizacao||'')}`,true)}<div class="mbody">${desl}${info}
    ${a.notif?`<div class="alert-h" style="background:var(--res-soft);color:var(--res)">Notificação de 48 h afixada. Prazo: ${fTs(a.notif.prazo)} ${fHr(a.notif.prazo)}${new Date(a.notif.prazo)<new Date()?' (vencido)':''}</div>`:''}
    <div class="box"><h3>Documentos</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${a.status==='ocupado'?`<button class="btn sm" data-act="doc-termo" data-n="${n}">Termo de responsabilidade</button>`:''}${a.status!=='inativo'?`<button class="btn sm" data-act="doc-notif" data-n="${n}">Notificação de 48 h</button>`:''}${a.notif?`<button class="btn sm" data-act="notif-fim" data-n="${n}">Usuário compareceu</button>`:''}<button class="btn sm" data-act="doc-abert" data-n="${n}">Termo de abertura</button></div></div>
+   ${anexosBox('a'+n,n)}
    <div class="box"><h3>Chave</h3><dl class="dl"><dt>Situação</dt><dd>${keyB(a.chaveSit)}</dd><dt>Número da chave</dt><dd>${esc(a.chaveNum||'—')}</dd></dl></div>
    ${a.obs?`<div class="box"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:''}
    <div class="box"><h3 style="display:flex;align-items:center">Histórico<button class="btn sm" style="margin-left:auto" data-act="hist-arm" data-n="${n}">${h?'Ocultar':'Ver histórico'}</button></h3>
@@ -945,7 +946,7 @@ async function loadHist(key,field,val){
 }
 
 /* colaborador: ficha */
-function mdCol(id){openModal(()=>colHtml(id),{live:true,wide:true});loadHist('c'+id,'colabId',id)}
+function mdCol(id){openModal(()=>colHtml(id),{live:true,wide:true});loadHist('c'+id,'colabId',id);loadAnexos('c'+id,'colab_id',id)}
 function colHtml(id){
   const c=S.col[id];if(!c)return mh('Colaborador')+'<div class="mbody"><p>Colaborador não encontrado.</p></div>';
   const A=(c.armarios||[]).map(armOf).filter(Boolean);
@@ -957,6 +958,7 @@ function colHtml(id){
   return `${mh(esc(c.nome),`Matrícula ${esc(c.matricula)} &nbsp;${sitB(c.situacao)}`)}<div class="mbody">${desl}
    <dl class="dl"><dt>Cargo</dt><dd>${esc(c.cargo||'—')}</dd><dt>Setor</dt><dd>${esc(c.setor||'—')}</dd><dt>Turno</dt><dd>${esc(c.turno||'—')}</dd><dt>Admissão</dt><dd>${fD(c.admissao)}</dd></dl>
    <div class="box"><h3>Armário atual</h3>${cards}</div>
+   ${anexosBox('c'+id,null)}
    <div class="box"><h3>Histórico de movimentações</h3>${!h||!h.rows?'<p class="small muted">Carregando…</p>':h.rows.length?`<div class="histmini">${tbl(['Data','Hora','Tipo','Armário','Responsável','Observação'],h.rows.map(m=>`<tr><td>${fTs(m.ts)}</td><td>${fHr(m.ts)}</td><td>${tipoB(m.tipo)}</td><td class="num">${m.armario?pad(m.armario):'—'}</td><td>${esc(nm(m.resp))}</td><td class="obs">${esc(m.obs||'')}</td></tr>`))}</div>`:'<p class="small muted">Sem movimentações.</p>'}</div>
   </div><div class="mfoot"><button class="btn" data-act="edit-colab" data-id="${esc(id)}">Editar cadastro</button>${A.length&&isAdmin()&&c.situacao!=='Desligado'?`<button class="btn" data-act="vincular" data-id="${esc(id)}">Vincular outro armário</button>`:''}</div>`;
 }
@@ -1413,6 +1415,57 @@ PAGES.documentos={
     <td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${a.numero}">Compareceu</button> <button class="btn sm ${venc?'pri':''}" data-act="doc-abert" data-n="${a.numero}">Termo de abertura</button></td></tr>`})):'<p class="small muted">Nenhuma notificação em andamento.</p>'}</section>`;
  }};
 
+/* ---------- anexos por armário (Supabase Storage) ---------- */
+const ANX_CATS=['Termo de responsabilidade assinado','Notificação de 48 h (foto)','Termo de abertura e inventário','Foto do armário','Foto de pertences','Comprovante de devolução','Outro'];
+const ANX_MAX=10*1024*1024;
+const fSize=b=>b>=1048576?(b/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' KB';
+async function loadAnexos(key,field,val){
+  S.ui.anx={key,rows:null};refreshModal();
+  const {data,error}=await SB.from('anexos').select('*').eq(field,val).order('criado_em',{ascending:false}).limit(500);
+  if(S.ui.anx&&S.ui.anx.key===key){S.ui.anx.rows=error?[]:data;S.ui.anx.err=error?String(error.message||''):null;refreshModal()}
+}
+function anexosBox(key,n){
+  const x=S.ui.anx&&S.ui.anx.key===key?S.ui.anx:null;
+  let body;
+  if(!x||!x.rows)body='<p class="small muted">Carregando…</p>';
+  else if(x.err)body=`<p class="small muted">Não foi possível carregar os anexos. ${/relation|does not exist|bucket/i.test(x.err)?'O banco ainda não tem a área de anexos: rode o script anexos-setup.sql no Supabase.':''}</p>`;
+  else if(!x.rows.length)body='<p class="small muted" style="margin:0 4px">Nenhum documento anexado.</p>';
+  else body=`<div class="histmini">${tbl(['Data','Documento','Tipo','Enviado por',''],x.rows.map(r=>`<tr><td>${fTs(r.criado_em)}<div class="small muted">${fHr(r.criado_em)}</div></td><td>${esc(r.nome)}<div class="small muted">${esc(r.descricao||'')}${r.descricao?' · ':''}${fSize(r.tamanho||0)}${r.armario&&!n?' · Armário '+pad(r.armario):''}</div></td><td>${esc(r.categoria||'—')}</td><td>${esc(nm(r.autor))}</td><td class="acts"><button class="btn sm" data-act="anx-open" data-path="${esc(r.caminho)}">Abrir</button></td></tr>`))}</div>`;
+  return `<div class="box"><h3 style="display:flex;align-items:center">Anexos${x&&x.rows&&x.rows.length?` (${x.rows.length})`:''}${n?`<button class="btn sm pri" style="margin-left:auto" data-act="anx-add" data-n="${n}">Anexar documento</button>`:''}</h3>${body}</div>`;
+}
+function fAnexo(n){
+  const a=armOf(n),c=a&&a.colabId?S.col[a.colabId]:null;
+  openModal(()=>formModal('anexo','Anexar documento ao '+lname(n),c?'Ocupante atual: '+esc(c.nome)+'. O anexo fica no histórico do armário e não pode ser apagado.':'O anexo fica no histórico do armário e não pode ser apagado.',`<input type="hidden" name="numero" value="${n}"><div class="fgrid">
+   <label class="field full"><span>Arquivo (PDF ou imagem, até 10 MB; pode tirar foto pelo celular)</span><input class="inp" type="file" name="arq" accept="application/pdf,image/*" multiple required></label>
+   <label class="field"><span>Tipo de documento</span><select class="inp" name="categoria">${opts(ANX_CATS,a&&a.notif?'Termo de abertura e inventário':'Termo de responsabilidade assinado')}</select></label>
+   <label class="field"><span>Vincular ao colaborador</span><select class="inp" name="colab">${opts(c?[[c.id,c.nome]]:[],c?c.id:'','Nenhum')}</select></label>
+   <label class="field full"><span>Descrição (opcional)</span><textarea class="inp" name="descricao" rows="2" placeholder="Ex.: termo assinado na entrega da chave; abertura com testemunhas"></textarea></label>
+  </div>`,'Enviar anexo'));
+}
+async function enviarAnexos(form,v){
+  const n=+v.numero,files=[...(form.querySelector('input[name=arq]').files||[])];
+  if(!files.length)fail('Escolha pelo menos um arquivo.');
+  const big=files.find(f=>f.size>ANX_MAX);if(big)fail(`O arquivo ${big.name} passa de 10 MB.`);
+  const bad=files.find(f=>!(f.type==='application/pdf'||/^image\//.test(f.type)));if(bad)fail(`O arquivo ${bad.name} não é PDF nem imagem.`);
+  const c=v.colab?S.col[v.colab]:null;
+  for(const f of files){
+    const safe=f.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9._-]+/g,'_').slice(-80);
+    const path=`armario-${pad(n)}/${today()}_${uid()}_${safe}`;
+    const up=await SB.storage.from('anexos').upload(path,f,{contentType:f.type,upsert:false});
+    if(up.error)fail(/bucket/i.test(up.error.message||'')?'A área de anexos ainda não foi criada no Supabase (script anexos-setup.sql).':'Falha ao enviar '+f.name+': '+up.error.message);
+    const row={id:uid(),armario:n,colab_id:c?c.id:null,nome:f.name,categoria:v.categoria,descricao:(v.descricao||'').trim(),caminho:path,tamanho:f.size,tipo:f.type};
+    const {error}=await SB.from('anexos').insert(row);sbErr(error);
+    await addMov({tipo:'Anexo',armario:n,colabId:c?c.id:null,nome:c?.nome||'',matricula:c?.matricula||'',obs:`${v.categoria}: ${f.name}${row.descricao?'. '+row.descricao:''}`});
+  }
+  return files.length;
+}
+async function abrirAnexo(path){
+  const w=window.open('','_blank');
+  const {data,error}=await SB.storage.from('anexos').createSignedUrl(path,600);
+  if(error||!data){if(w)w.close();fail('Não foi possível abrir o anexo.')}
+  if(w)w.location.href=data.signedUrl;else location.href=data.signedUrl;
+}
+
 /* ---------- busca global ---------- */
 function gsearch(v){
   const box=$('#gres');const q=norm(v);
@@ -1455,6 +1508,8 @@ const ACT={
   'doc-notif-blank':(d,el)=>runDoc(el,()=>pdfNotif(null,null)),
   'doc-abert':d=>{let n=d.n?+d.n:+($('#'+(d.sel||'x'))?.value||0);if(!n){toast('Selecione o armário.','err');return}fAbertura(n)},
   'doc-abert-blank':(d,el)=>runDoc(el,()=>pdfAbertura(null,'')),
+  'anx-add':d=>fAnexo(+d.n),
+  'anx-open':(d,el)=>{el.disabled=true;run(()=>abrirAnexo(d.path)).then(()=>{if(document.contains(el))el.disabled=false})},
   'notif-fim':d=>run(()=>encerrarNotif(+d.n),'Notificação encerrada.'),
   'pend-resolver':d=>{const p=S.pend[d.id];if(p)run(()=>put('pendencias',d.id,{...p,resolvida:true,resolvidaEm:new Date().toISOString(),resolvidaPor:S.me.id}),'Pendência resolvida.')},
   'rel-tab':d=>{S.f.rel.t=d.t;go('relatorios')},
@@ -1474,6 +1529,7 @@ const FORMS={
   reservar:async v=>{let c=null;if((v.colab||'').trim()){c=resolveCol(v.colab);if(!c)fail('Colaborador não encontrado. Selecione da lista ou deixe em branco.')}
     await setStatus(+v.numero,['disponivel'],'reservado','Reserva',[c?'Reservado para '+c.nome:'Reserva sem colaborador definido',(v.obs||'').trim()].filter(Boolean).join('. '),{reservaPara:c?c.id:null,reservaObs:(v.obs||'').trim()});closeModal();toast('Armário reservado.')},
   manut:async v=>{if(!(v.obs||'').trim())fail('Informe o motivo da manutenção.');await setStatus(+v.numero,['disponivel','reservado'],'manutencao','Manutenção',v.obs.trim(),{manutObs:v.obs.trim(),reservaPara:null,reservaObs:null});closeModal();toast('Armário em manutenção.')},
+  anexo:async(v,form)=>{const n=+v.numero;const q=await enviarAnexos(form,v);toast(q>1?q+' anexos enviados.':'Anexo enviado.');mdArm(n)},
   notif:async v=>{if(!v.numero)fail('Selecione o armário.');if(!v.afix)fail('Informe a data e a hora da afixação.');const n=+v.numero;const ok=await pdfNotif(n,v.afix);if(ok){closeModal();toast('Notificação gerada e registrada.')}},
   abertura:async v=>{const ok=await pdfAbertura(+v.numero,v.motivo);if(ok){closeModal();toast('Termo de abertura gerado.')}},
   pend:async v=>{if(!(v.texto||'').trim())fail('Descreva a pendência.');const id=uid();await put('pendencias',id,{id,texto:v.texto.trim(),armario:v.armario?+v.armario:null,criadaEm:new Date().toISOString(),por:S.me.id,resolvida:false});closeModal();toast('Pendência registrada.')},
@@ -1508,7 +1564,7 @@ document.addEventListener('submit',async e=>{
   const fn=FORMS[form.dataset.form];if(!fn)return;
   const btn=form.querySelector('button[type=submit],button:not([type])');const err=form.querySelector('#ferr');if(err)err.textContent='';
   if(btn)btn.disabled=true;
-  try{await fn(Object.fromEntries(new FormData(form)))}
+  try{await fn(Object.fromEntries(new FormData(form)),form)}
   catch(ex){const m=errMsg(ex);if(err&&document.contains(err))err.textContent=m;else toast(m,'err')}
   finally{if(btn&&document.contains(btn))btn.disabled=false}
 });
