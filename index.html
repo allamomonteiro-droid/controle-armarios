@@ -16,10 +16,10 @@
   --bg:#ffffff;--surface:#ffffff;--surface-2:#f3f3f3;--fill:#f3f3f3;--fill-2:#f7f7f7;--muted:#6f6f6f;
   --olive:#171717;--olive-dk:#000000;--olive-soft:#f3f3f3;--on-olive:#ffffff;
   /* status: só pontos discretos; superfícies continuam acromáticas */
-  --ok-dot:#3f9a63;--ok:#171717;--ok-soft:#f3f3f3;
-  --bad-dot:#d0453b;--bad:#b42318;--bad-soft:#f3f3f3;
-  --res-dot:#d9a520;--res:#171717;--res-soft:#ffe9bf;
-  --mnt-dot:#d9822b;--mnt:#171717;--mnt-soft:#f3f3f3;
+  --ok-dot:#1f9d55;--ok:#171717;--ok-soft:#f3f3f3;
+  --bad-dot:#d93636;--bad:#b42318;--bad-soft:#f3f3f3;
+  --res-dot:#f5b700;--res:#171717;--res-soft:#ffe9bf;
+  --mnt-dot:#6b7280;--mnt:#171717;--mnt-soft:#f3f3f3;
   --ina-dot:#c7c7c7;--ina:#a0a0a0;--ina-soft:#f3f3f3;
   --focus:rgba(23,23,23,.18);
   --shadow-card:rgba(207,207,207,.01) 0 132px 53px 0,rgba(207,207,207,.05) 0 74px 44px 0,rgba(207,207,207,.09) 0 33px 33px 0,rgba(207,207,207,.1) 0 8px 18px 0;
@@ -195,17 +195,17 @@ input[type=file].inp{padding:8px 16px;height:auto;border-radius:20px}
 .mapwrap{overflow-x:auto;padding:24px;border-radius:20px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow-card)}
 .floor{height:1px;margin-top:16px;background:var(--line)}
 .map{display:grid;grid-template-columns:repeat(var(--cols),minmax(64px,1fr));gap:8px;min-width:calc(var(--cols) * 72px)}
-.lk{--dc:var(--ok-dot);--bgc:#f1f8f4;--bdc:#d3e9dc;position:relative;aspect-ratio:3/4;border:1px solid var(--bdc);border-radius:14px;background:var(--bgc);cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:var(--ink);overflow:hidden;transition:transform .12s,opacity .2s,box-shadow .15s;touch-action:manipulation}
-.lk:hover{box-shadow:0 0 0 2px var(--bdc)}
+.lk{--bgc:#1f9d55;--fg:#ffffff;position:relative;aspect-ratio:3/4;border:0;border-radius:14px;background:var(--bgc);cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;color:var(--fg);overflow:hidden;transition:transform .12s,opacity .2s,filter .15s;touch-action:manipulation}
+.lk:hover{filter:brightness(1.08)}
 .lk:active{transform:scale(.96)}
-.lk::before{content:"";position:absolute;top:12px;left:30%;right:30%;height:8px;background:repeating-linear-gradient(180deg,currentColor 0 1px,transparent 1px 3px);opacity:.15}
+.lk::before{content:"";position:absolute;top:12px;left:30%;right:30%;height:8px;background:repeating-linear-gradient(180deg,currentColor 0 1px,transparent 1px 3px);opacity:.35}
 .lk .n{font-size:20px;line-height:1;letter-spacing:-.02em;position:absolute;top:40%;left:0;right:0;text-align:center}
-.lk .w{font-size:10px;line-height:1.2;width:100%;padding:0 6px 8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--slate)}
-.lk .s{position:absolute;top:8px;left:8px;width:6px;height:6px;border-radius:9999px;background:var(--dc)}
-.lk.ocupado{--dc:var(--bad-dot);--bgc:#fcefed;--bdc:#f2cdc8}
-.lk.reservado{--dc:var(--res-dot);--bgc:#fff6e3;--bdc:#f1ddb0}
-.lk.manutencao{--dc:var(--mnt-dot);--bgc:#f4f4f4;--bdc:#e2e2e2;color:var(--pewter)}
-.lk.inativo{--dc:var(--ina-dot);--bgc:transparent;--bdc:#e5e7eb;border-style:dashed;color:var(--ash)}
+.lk .w{font-size:10px;line-height:1.2;width:100%;padding:0 6px 8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:currentColor;opacity:.85}
+.lk .s{display:none}
+.lk.ocupado{--bgc:#d93636}
+.lk.reservado{--bgc:#f5b700;--fg:#171717}
+.lk.manutencao{--bgc:#6b7280}
+.lk.inativo{--bgc:transparent;--fg:#a0a0a0;border:1px dashed #c7c7c7}
 .lk.dim{opacity:.15}
 .lk .flag{position:absolute;top:5px;right:6px;font-size:11px;line-height:1}
 .mapnote{font-size:12px;color:var(--slate);margin:16px 4px 0}
@@ -316,7 +316,7 @@ const ST={
   manutencao:{l:'Manutenção',c:'mnt',e:'⚠️'},
   inativo:{l:'Inativo',c:'ina',e:'⚪'}
 };
-const GRAY={ocupado:'#e8a39b',reservado:'#ebc779',manutencao:'#c7c7c7',disponivel:'#a9d4ba',inativo:'#f3f3f3'};
+const GRAY={ocupado:'#d93636',reservado:'#f5b700',manutencao:'#6b7280',disponivel:'#1f9d55',inativo:'#f3f3f3'};
 const CHAVES=['Entregue','Devolvida','Perdida','Não entregue','Segunda via'];
 const SITS=['Ativo','Afastado','Desligado'];
 const TIPOS=['Ocupação','Devolução','Troca','Reserva','Manutenção','Liberação','Alteração de chave','Inativação','Reativação','Notificação','Documento emitido'];
