@@ -699,7 +699,7 @@ PAGES.pendencias={
   ${sec('chave',['Armário','Status','Nº chave','Situação da chave','Ocupante',''],p=>{const c=p.a.colabId?S.col[p.a.colabId]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${bdg(p.a.status)}</td><td>${esc(p.a.chaveNum||'—')}</td><td>${keyB(p.a.chaveSit)}</td><td>${c?esc(c.nome):'—'}</td><td class="acts"><button class="btn sm" data-act="edit-arm" data-n="${p.n}">Atualizar chave</button></td></tr>`})}
   ${sec('manut',['Armário','Localização','Observação','Desde',''],p=>`<tr><td class="num">${pad(p.n)}</td><td>${esc(p.a.localizacao||'—')}</td><td class="obs">${esc(p.a.manutObs||p.a.obs||'')}</td><td>${lastMov(p.a)}</td><td class="acts"><button class="btn sm" data-act="concluir-manut" data-n="${p.n}">Concluir manutenção</button></td></tr>`)}
   ${sec('reserva',['Armário','Reservado para','Observação','Desde',''],p=>{const c=p.a.reservaPara?S.col[p.a.reservaPara]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${c?esc(c.nome):'—'}</td><td class="obs">${esc(p.a.reservaObs||'')}</td><td>${lastMov(p.a)}</td><td class="acts"><button class="btn sm" data-act="armario" data-n="${p.n}">Abrir</button></td></tr>`})}
-  ${sec('notif',['Armário','Usuário cadastrado','Prazo','Situação',''],p=>{const c=p.a.colabId?S.col[p.a.colabId]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${c?esc(c.nome):'—'}</td><td>${fTs(p.a.notif.prazo)} ${fHr(p.a.notif.prazo)}</td><td>${p.venc?'<span class="bdg bad">Prazo vencido</span>':'<span class="bdg res">No prazo</span>'}</td><td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${p.n}">Compareceu</button> <button class="btn sm ${p.venc?'pri':''}" data-act="doc-abert" data-n="${p.n}">Termo de abertura</button></td></tr>`})}
+  ${sec('notif',['Armário','Usuário cadastrado','Prazo','Situação',''],p=>{const c=p.a.colabId?S.col[p.a.colabId]:null;return `<tr><td class="num">${pad(p.n)}</td><td>${c?esc(c.nome):'—'}</td><td>${fTs(p.a.notif.prazo)} ${fHr(p.a.notif.prazo)}</td><td>${p.venc?'<span class="bdg bad">Prazo vencido</span>':'<span class="bdg res">No prazo</span>'}</td><td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${p.n}">Compareceu</button> <button class="btn sm ${p.venc?'pri':''}" data-act="doc-aviso" data-n="${p.n}">Aviso de abertura</button> <button class="btn sm ${p.venc?'pri':''}" data-act="doc-abert" data-n="${p.n}">Termo de abertura</button></td></tr>`})}
   ${sec('manual',['Registrada em','Descrição','Armário','Registrada por',''],p=>{ensureNames([p.p.por]);return `<tr><td>${fTs(p.p.criadaEm)}</td><td>${esc(p.p.texto)}</td><td>${p.p.armario?pad(p.p.armario):'—'}</td><td>${esc(nm(p.p.por))}</td><td class="acts"><button class="btn sm" data-act="pend-resolver" data-id="${esc(p.p.id)}">Marcar como resolvida</button></td></tr>`})}
   </div>`;
  }};
@@ -931,7 +931,7 @@ function armHtml(n){
   const h=S.ui.hist&&S.ui.hist.key==='a'+n?S.ui.hist:null;
   return `${mh(lname(n),`${bdg(a.status)} &nbsp;${esc(a.localizacao||'')}`,true)}<div class="mbody">${desl}${info}
    ${a.notif?`<div class="alert-h" style="background:var(--res-soft);color:var(--res)">Notificação de 48 h afixada. Prazo: ${fTs(a.notif.prazo)} ${fHr(a.notif.prazo)}${new Date(a.notif.prazo)<new Date()?' (vencido)':''}</div>`:''}
-   <div class="box"><h3>Documentos</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${a.status==='ocupado'?`<button class="btn sm" data-act="doc-termo" data-n="${n}">Termo de responsabilidade</button>`:''}${a.status!=='inativo'?`<button class="btn sm" data-act="doc-notif" data-n="${n}">Notificação de 48 h</button>`:''}${a.notif?`<button class="btn sm" data-act="notif-fim" data-n="${n}">Usuário compareceu</button>`:''}<button class="btn sm" data-act="doc-abert" data-n="${n}">Termo de abertura</button></div></div>
+   <div class="box"><h3>Documentos</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${a.status==='ocupado'?`<button class="btn sm" data-act="doc-termo" data-n="${n}">Termo de responsabilidade</button>`:''}${a.status!=='inativo'?`<button class="btn sm" data-act="doc-notif" data-n="${n}">Notificação de 48 h</button>`:''}${a.notif?`<button class="btn sm ${new Date(a.notif.prazo)<new Date()?'pri':''}" data-act="doc-aviso" data-n="${n}">Aviso de abertura</button><button class="btn sm" data-act="notif-fim" data-n="${n}">Usuário compareceu</button>`:''}<button class="btn sm" data-act="doc-abert" data-n="${n}">Termo de abertura</button></div></div>
    ${anexosBox('a'+n,n)}
    <div class="box"><h3>Chave</h3><dl class="dl"><dt>Situação</dt><dd>${keyB(a.chaveSit)}</dd><dt>Número da chave</dt><dd>${esc(a.chaveNum||'—')}</dd></dl></div>
    ${a.obs?`<div class="box"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:''}
@@ -1381,6 +1381,44 @@ function fNotif(n){
    <label class="field full"><span>Data e hora da afixação</span><input class="inp" type="datetime-local" name="afix" value="${dtLocalNow()}" required></label>
    <p class="hint full">O prazo de comparecimento é calculado em 48 horas. Se terminar no sábado ou domingo, passa para segunda-feira no mesmo horário. O nome do usuário não aparece no aviso, que fica exposto no vestiário.</p></div>`,'Gerar notificação'));
 }
+async function pdfAviso(n,quandoStr){
+  const cf=CFG(),dias=+cf.prazoGuarda||30,blank=!n,a=n?armOf(n):null,nt=a&&a.notif;
+  const q=quandoStr?new Date(quandoStr+'T12:00'):null;
+  const P=await newPdf(),d=P.doc;d.__titulo='Aviso de abertura de armário';
+  d.setFillColor(178,34,34);d.rect(0,0,595.28,10,'F');
+  P.y=40;try{d.addImage(FARID_LOGO,'JPEG',P.M+P.W/2-70,P.y,140,45.5)}catch(e){}P.y+=56;
+  txt(P,cf.razao||'Recursos Humanos',{size:9,color:110,align:'center',after:2});txt(P,'Recursos Humanos, unidade Patos de Minas/MG',{size:9,color:110,align:'center',after:20});
+  txt(P,'AVISO DE ABERTURA',{size:30,bold:true,align:'center',after:2,color:[178,34,34]});
+  txt(P,'Este armário será aberto pelo RH',{size:12,align:'center',color:80,after:20});
+  const y0=P.y;box(P,y0,140,[252,238,236]);setF(P,12,'bold',[178,34,34]);d.text('ARMÁRIO Nº',P.M+P.W/2,y0+30,{align:'center'});
+  setF(P,80,'bold',15);d.text(blank?'_____':pad(n),P.M+P.W/2,y0+112,{align:'center'});P.y=y0+160;
+  txt(P,'Ao usuário deste armário:',{bold:true,size:12,after:8,color:15});
+  txt(P,'Você foi notificado e não compareceu ao RH no prazo. Conforme o termo de responsabilidade, este armário será aberto na data abaixo.',{size:12,lh:1.45,after:16});
+  const y1=P.y;box(P,y1,62,[255,246,224]);setF(P,10,'bold',[150,90,0]);d.text('DATA DA ABERTURA',P.M+16,y1+22);
+  setF(P,15,'bold',15);d.text(q?`${q.toLocaleDateString('pt-BR')} (${DIAS[q.getDay()]})`:'____/____/________',P.M+16,y1+46);P.y=y1+78;
+  txt(P,`A abertura será feita pelo RH com a chave reserva, na presença de duas testemunhas. Os pertences encontrados serão relacionados em termo de inventário e ficarão sob a guarda do RH por ${dias} dias, para retirada mediante recibo. Itens perecíveis poderão ser descartados e itens ilícitos serão entregues às autoridades.`,{size:11,lh:1.45,after:10});
+  txt(P,`Se você é o usuário deste armário, procure o RH antes dessa data para evitar a abertura. Atendimento: ${cf.atendimento||'em horário comercial'}.`,{size:11,lh:1.45,after:20});
+  rule(P,16);
+  fields(P,[['Afixado em',''],['Responsável RH',''],['Testemunha da afixação',''],['Assinatura do responsável','']]);
+  footer(P,d);
+  const ok=await saveFile(blank?'aviso-abertura-em-branco.pdf':`aviso-abertura-armario-${pad(n)}.pdf`,d.output('arraybuffer'),'application/pdf');
+  if(ok&&!blank&&q){
+    const c=a&&a.colabId?S.col[a.colabId]:null;
+    await addMov({tipo:'Notificação',armario:n,colabId:c?c.id:null,nome:c?.nome||'',matricula:c?.matricula||'',obs:`Aviso de abertura emitido. Abertura marcada para ${q.toLocaleDateString('pt-BR')}`});
+  }
+  return ok;
+}
+function fAviso(n){
+  const a=n?armOf(n):null,nt=a&&a.notif;
+  const venc=nt&&new Date(nt.prazo)<new Date();
+  const d0=new Date(Math.max(Date.now(),nt?new Date(nt.prazo).getTime():0)+864e5);const def=isoLocal(d0);
+  openModal(()=>formModal('aviso','Aviso de abertura',n?`${lname(n)}. Para afixar na porta depois que o prazo da notificação venceu sem comparecimento.`:'Selecione o armário e a data da abertura.',`<div class="fgrid">
+   ${n?`<input type="hidden" name="numero" value="${n}">`:`<label class="field full"><span>Armário</span><select class="inp" name="numero" required>${opts(activeArms().filter(x=>x.notif).map(x=>[x.numero,lname(x.numero)+(new Date(x.notif.prazo)<new Date()?' (prazo vencido)':' (no prazo)')]),'','Selecione')}</select></label>`}
+   ${n&&!nt?'<p class="hint full" style="color:var(--bad)">Este armário não tem notificação de 48 h registrada. O aviso sai com os campos da notificação em branco.</p>':''}
+   ${n&&nt&&!venc?`<p class="hint full" style="color:var(--bad)">O prazo da notificação ainda não venceu (até ${fTs(nt.prazo)} ${fHr(nt.prazo)}). Marque a abertura para depois dessa data.</p>`:''}
+   <label class="field full"><span>Data da abertura</span><input class="inp" type="date" name="quando" value="${def}" required></label>
+   <p class="hint full">O aviso não traz o nome do usuário, porque fica exposto no vestiário. Depois da abertura, use o Termo de abertura e inventário e anexe as fotos ao armário.</p></div>`,'Gerar aviso'));
+}
 function fAbertura(n){
   const a=armOf(n);const sug=a&&a.notif?'notificacao':a&&a.colabId&&S.col[a.colabId]?.situacao==='Desligado'?'desligamento':'';
   openModal(()=>formModal('abertura','Termo de abertura e inventário',lname(n)+'. Imprima e preencha no ato da abertura, com duas testemunhas.',`<input type="hidden" name="numero" value="${n}">
@@ -1404,6 +1442,9 @@ PAGES.documentos={
   <section class="panel"><h2>Notificação de 48 horas</h2>
    <p class="hint" style="margin:-6px 2px 12px">Aviso para afixar na porta do armário pedindo que o usuário procure o RH em até 48 horas. Ao gerar, o armário passa a constar em Pendências até o comparecimento ou a abertura.</p>
    <div class="toolbar" style="margin:0"><button class="btn pri" data-act="doc-notif">Gerar notificação</button><button class="btn" data-act="doc-notif-blank">Em branco</button></div></section>
+  <section class="panel"><h2>Aviso de abertura</h2>
+   <p class="hint" style="margin:-6px 2px 12px">Depois que o prazo da notificação de 48 horas vence sem comparecimento, afixe este aviso na porta informando a data e a hora em que o armário será aberto.</p>
+   <div class="toolbar" style="margin:0"><button class="btn pri" data-act="doc-aviso">Gerar aviso</button><button class="btn" data-act="doc-aviso-blank">Em branco</button></div></section>
   <section class="panel"><h2>Termo de abertura e inventário</h2>
    <p class="hint" style="margin:-6px 2px 12px">Usado quando o RH abre o armário com a chave reserva: motivo, presentes, lista de pertences, destino de cada item e recibo de retirada.</p>
    <div class="toolbar" style="margin:0"><select class="inp grow" id="d-abert" aria-label="Armário">${opts(act.map(lab),'','Selecione o armário')}</select>
@@ -1412,7 +1453,7 @@ PAGES.documentos={
   const L=arms().filter(a=>a.notif);
   return `<section class="panel"><h2>Notificações em andamento</h2>${L.length?tbl(['Armário','Usuário cadastrado','Afixada em','Prazo','Situação',''],L.map(a=>{const c=a.colabId?S.col[a.colabId]:null,venc=new Date(a.notif.prazo)<new Date();
     return `<tr><td class="num">${pad(a.numero)}</td><td>${c?esc(c.nome):'—'}</td><td>${fTs(a.notif.em)} ${fHr(a.notif.em)}</td><td>${fTs(a.notif.prazo)} ${fHr(a.notif.prazo)}</td><td>${venc?'<span class="bdg bad">Prazo vencido</span>':'<span class="bdg res">No prazo</span>'}</td>
-    <td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${a.numero}">Compareceu</button> <button class="btn sm ${venc?'pri':''}" data-act="doc-abert" data-n="${a.numero}">Termo de abertura</button></td></tr>`})):'<p class="small muted">Nenhuma notificação em andamento.</p>'}</section>`;
+    <td class="acts"><button class="btn sm" data-act="notif-fim" data-n="${a.numero}">Compareceu</button> <button class="btn sm ${venc?'pri':''}" data-act="doc-aviso" data-n="${a.numero}">Aviso de abertura</button> <button class="btn sm ${venc?'pri':''}" data-act="doc-abert" data-n="${a.numero}">Termo de abertura</button></td></tr>`})):'<p class="small muted">Nenhuma notificação em andamento.</p>'}</section>`;
  }};
 
 /* ---------- anexos por armário (Supabase Storage) ---------- */
@@ -1505,6 +1546,8 @@ const ACT={
   'pend-nova':fPend,
   'doc-termo':(d,el)=>{let n=d.n?+d.n:null;if(d.sel){n=+($('#'+d.sel)?.value||0);if(!n){toast('Selecione um armário ocupado.','err');return}}if(MOD&&!d.sel)closeModal();runDoc(el,()=>pdfTermo(n))},
   'doc-notif':d=>fNotif(d.n?+d.n:null),
+  'doc-aviso':d=>fAviso(d.n?+d.n:null),
+  'doc-aviso-blank':(d,el)=>runDoc(el,()=>pdfAviso(null,null)),
   'doc-notif-blank':(d,el)=>runDoc(el,()=>pdfNotif(null,null)),
   'doc-abert':d=>{let n=d.n?+d.n:+($('#'+(d.sel||'x'))?.value||0);if(!n){toast('Selecione o armário.','err');return}fAbertura(n)},
   'doc-abert-blank':(d,el)=>runDoc(el,()=>pdfAbertura(null,'')),
@@ -1531,6 +1574,7 @@ const FORMS={
   manut:async v=>{if(!(v.obs||'').trim())fail('Informe o motivo da manutenção.');await setStatus(+v.numero,['disponivel','reservado'],'manutencao','Manutenção',v.obs.trim(),{manutObs:v.obs.trim(),reservaPara:null,reservaObs:null});closeModal();toast('Armário em manutenção.')},
   anexo:async(v,form)=>{const n=+v.numero;const q=await enviarAnexos(form,v);toast(q>1?q+' anexos enviados.':'Anexo enviado.');mdArm(n)},
   notif:async v=>{if(!v.numero)fail('Selecione o armário.');if(!v.afix)fail('Informe a data e a hora da afixação.');const n=+v.numero;const ok=await pdfNotif(n,v.afix);if(ok){closeModal();toast('Notificação gerada e registrada.')}},
+  aviso:async v=>{if(!v.numero)fail('Selecione o armário.');if(!v.quando)fail('Informe a data da abertura.');const ok=await pdfAviso(+v.numero,v.quando);if(ok){closeModal();toast('Aviso de abertura gerado e registrado.')}},
   abertura:async v=>{const ok=await pdfAbertura(+v.numero,v.motivo);if(ok){closeModal();toast('Termo de abertura gerado.')}},
   pend:async v=>{if(!(v.texto||'').trim())fail('Descreva a pendência.');const id=uid();await put('pendencias',id,{id,texto:v.texto.trim(),armario:v.armario?+v.armario:null,criadaEm:new Date().toISOString(),por:S.me.id,resolvida:false});closeModal();toast('Pendência registrada.')},
   pick:async v=>{const c=resolveCol(v.colab);if(!c||!(c.armarios||[]).length)fail('Selecione um colaborador com armário vinculado.');closeModal();if(v.kind==='dev'){if(c.armarios.length>1)mdCol(c.id);else fDevolver(c.armarios[0])}else fTrocaArm(c.id,c.armarios[0])},
