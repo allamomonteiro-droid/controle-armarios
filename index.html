@@ -1413,7 +1413,7 @@ function fAviso(n){
   const venc=nt&&new Date(nt.prazo)<new Date();
   const d0=new Date(Math.max(Date.now(),nt?new Date(nt.prazo).getTime():0)+864e5);const def=isoLocal(d0);
   openModal(()=>formModal('aviso','Aviso de abertura',n?`${lname(n)}. Para afixar na porta depois que o prazo da notificação venceu sem comparecimento.`:'Selecione o armário e a data da abertura.',`<div class="fgrid">
-   ${n?`<input type="hidden" name="numero" value="${n}">`:`<label class="field full"><span>Armário</span><select class="inp" name="numero" required>${opts(activeArms().filter(x=>x.notif).map(x=>[x.numero,lname(x.numero)+(new Date(x.notif.prazo)<new Date()?' (prazo vencido)':' (no prazo)')]),'','Selecione')}</select></label>`}
+   ${n?`<input type="hidden" name="numero" value="${n}">`:`<label class="field full"><span>Armário</span><select class="inp" name="numero" required>${opts([...activeArms().filter(x=>x.notif),...activeArms().filter(x=>!x.notif)].map(x=>[x.numero,lname(x.numero)+(x.notif?(new Date(x.notif.prazo)<new Date()?' (notificação vencida)':' (notificação no prazo)'):'')]),'','Selecione')}</select></label>`}
    ${n&&!nt?'<p class="hint full" style="color:var(--bad)">Este armário não tem notificação de 48 h registrada. O aviso sai com os campos da notificação em branco.</p>':''}
    ${n&&nt&&!venc?`<p class="hint full" style="color:var(--bad)">O prazo da notificação ainda não venceu (até ${fTs(nt.prazo)} ${fHr(nt.prazo)}). Marque a abertura para depois dessa data.</p>`:''}
    <label class="field full"><span>Data da abertura</span><input class="inp" type="date" name="quando" value="${def}" required></label>
